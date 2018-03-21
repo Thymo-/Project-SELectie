@@ -57,6 +57,18 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
         setTurnRight(steerAngle);
         waitFor(new TurnCompleteCondition(this));
-        return steerAngle
+        return steerAngle;
+    }
+
+    /**
+     * Focus on one target and evade if he shoots
+     *
+     * @param Target
+     * @return void
+     *
+     * @author Sieger van Breugel
+     */
+    protected void evade(Target target) {
+
     }
 }
