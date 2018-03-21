@@ -15,7 +15,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * @param xcmd Desired X position
      * @param ycmd Desired Y position
      * @return double: Required steering angle
-     *
      * @author Thymo van Beers
      */
     double calcHeading(double xcmd, double ycmd) {
@@ -31,14 +30,13 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * @param xcmd Desired X position
      * @param ycmd Desired Y position
      * @return double: Distance to point
-     *
      * @author Thymo van Beers
      */
     double calcDistance(double xcmd, double ycmd) {
         double dX = xcmd - getX();
         double dY = ycmd - getY();
 
-        return (Math.sqrt((dX*dX+dY*dY)));
+        return (Math.sqrt((dX * dX + dY * dY)));
     }
 
     /**
@@ -48,7 +46,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @param heading Desired heading (north referenced)
      * @return The calculated steering angl
-     *
      * @author Thymo van Beers
      */
     double steerTo(double heading) {
@@ -71,7 +68,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @param xcmd X position
      * @param ycmd Y position
-     *
      * @author Thymo van Beers
      */
     void moveTo(double xcmd, double ycmd) {
@@ -96,5 +92,45 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         steerTo(calcHeading(xcmd, ycmd));
         setAhead(calcDistance(xcmd, ycmd));
         waitFor(new MoveCompleteCondition(this));
+    }
+
+    /**
+     * Evade and turn to target
+     *
+     * @param target
+     * @author Sieger van Breugel
+     */
+    protected void evade(Target target) {
+        double xPos = this.getX;
+        double yPos = this.getY;
+
+        if (xPos < getBattlefieldWidth() / 2 && yPos < getBattlefieldHeight() / 2) {
+            if (this.getHeading() < 90 || this.getHeading() > 270) {
+                setTurnRight(90);
+            } else {
+                setTurnLeft(90);
+            }
+        } else if (xPos < getBattlefieldWidth() / 2 && yPos > getBattlefieldHeight() / 2) {
+            if (this.getHeading() < 90 || this.getHeading() > 270) {
+                setTurnLeft(90);
+            } else {
+                setTurnRight(90);
+            }
+        } else if (xPos > getBattlefieldWidth() / 2 && yPos < getBattlefieldHeight() / 2) {
+            if (this.getHeading() < 90 || this.getHeading() > 270) {
+                setTurnLeft(90);
+            } else {
+                setTurnRight(90);
+            }
+        } else if (xPos > getBattlefieldWidth() / 2 && yPos > getBattlefieldHeight() / 2) {
+            if (this.getHeading() < 90 || this.getHeading() > 270) {
+                setTurnRight(90);
+            } else {
+                setTurnLeft(90);
+            }
+        }
+        setAhead(36);
+        waitFor(new TurnCompleteCondition(this));
+        steerTo(calcHeading(target.getxPos, target.getyPos);)
     }
 }
