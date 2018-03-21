@@ -17,7 +17,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @author Thymo van Beers
      */
-    protected double calcHeading(double xcmd, double ycmd) {
+    double calcHeading(double xcmd, double ycmd) {
         double dX = xcmd - getX();
         double dY = ycmd - getY();
 
@@ -33,7 +33,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @author Thymo van Beers
      */
-    protected double calcDistance(double xcmd, double ycmd) {
+    double calcDistance(double xcmd, double ycmd) {
         double dX = xcmd - getX();
         double dY = ycmd - getY();
 
@@ -49,7 +49,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @author Thymo van Beers
      */
-    protected double steerTo(double heading) {
+    double steerTo(double heading) {
         double steerAngle = heading - getHeading();
 
         if (steerAngle < -180) {
