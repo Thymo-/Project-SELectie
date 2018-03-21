@@ -104,29 +104,20 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         double xPos = this.getX;
         double yPos = this.getY;
 
-        if (xPos < getBattlefieldWidth() / 2 && yPos < getBattlefieldHeight() / 2) {
+        //If robot is on left side
+        if (xPos < getBattlefieldWidth() / 2) {
             if (this.getHeading() < 90 || this.getHeading() > 270) {
                 setTurnRight(90);
             } else {
                 setTurnLeft(90);
             }
-        } else if (xPos < getBattlefieldWidth() / 2 && yPos > getBattlefieldHeight() / 2) {
+        }
+        //If robot is on right side
+        else if (xPos > getBattlefieldWidth() / 2) {
             if (this.getHeading() < 90 || this.getHeading() > 270) {
                 setTurnLeft(90);
             } else {
                 setTurnRight(90);
-            }
-        } else if (xPos > getBattlefieldWidth() / 2 && yPos < getBattlefieldHeight() / 2) {
-            if (this.getHeading() < 90 || this.getHeading() > 270) {
-                setTurnLeft(90);
-            } else {
-                setTurnRight(90);
-            }
-        } else if (xPos > getBattlefieldWidth() / 2 && yPos > getBattlefieldHeight() / 2) {
-            if (this.getHeading() < 90 || this.getHeading() > 270) {
-                setTurnRight(90);
-            } else {
-                setTurnLeft(90);
             }
         }
         setAhead(36);
