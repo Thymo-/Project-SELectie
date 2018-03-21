@@ -21,6 +21,9 @@ public class Target implements Comparable<Target> {
 
     private String name;
 
+    public Target() {
+    }
+
     public Target(double xPos, double yPos, double bearing, double energy, double distance, double heading, double velocity, int turn, String name) {
         this.xPos = xPos;
         this.yPos = yPos;

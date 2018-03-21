@@ -22,13 +22,61 @@ public class TargetMap {
      * @param yPos Y position
      *
      * @return The closest target
+     *
+     * @author Tim Hofman
      */
     public Target getClosest(double xPos, double yPos) {
         //TODO: Find closest target based on given position
-        return null;
+        Target closestTarget = new Target();
+
+        for (int i = 0; i < targetList.size(); i++) {
+            if (i == 0) {
+                closestTarget = targetList.get(i);
+            } else {
+                double distanceToClosestTargetXPos = distanceToTarget(xPos, closestTarget.getxPos());
+                double distanceToClosestTargetYPos = distanceToTarget(yPos, closestTarget.getyPos());
+                double distanceToTargetXPos = distanceToTarget(xPos, targetList.get(i).getxPos());
+                double distanceToTargetYPos = distanceToTarget(yPos, targetList.get(i).getyPos());
+
+                if (distanceToTargetXPos < distanceToClosestTargetXPos && distanceToTargetYPos < distanceToClosestTargetYPos) {
+                    closestTarget = targetList.get(i);
+                } else if (distanceToTargetXPos < distanceToClosestTargetXPos) {
+                    if (distanceToTargetXPos + distanceToTargetYPos < distanceToClosestTargetXPos + distanceToClosestTargetYPos) {
+                        closestTarget = targetList.get(i);
+                    }
+                } else if (distanceToTargetYPos < distanceToClosestTargetYPos) {
+                    if (distanceToTargetXPos + distanceToTargetYPos < distanceToClosestTargetXPos + distanceToClosestTargetYPos) {
+                        closestTarget = targetList.get(i);
+                    }
+                }
+            }
+        }
+
+        return closestTarget;
+    }
+
+    private double distanceToTarget(double pos, double targetPos) {
+        if (pos >= targetPos) {
+            return (pos - targetPos);
+        } else {
+            return (targetPos - pos);
+        }
     }
 
     public void addTarget(Target target) {
-        targetList.add(target);
+        boolean addTarget = false;
+
+        for (int i = 0; i < targetList.size(); i++) {
+            if (target.getName().equals(targetList.get(i).getName())) {
+                addTarget = false;
+                break;
+            } else {
+                addTarget = true;
+            }
+        }
+
+        if (addTarget) {
+            targetList.add(target);
+        }
     }
 }
