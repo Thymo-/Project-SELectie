@@ -1,8 +1,11 @@
 package nl.saxion.ehi1vsb1;
 
+import nl.saxion.ehi1vsb1.data.Target;
+import nl.saxion.ehi1vsb1.data.TargetMap;
 import robocode.TurnCompleteCondition;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
+    TargetMap targets;
 
     /**
      * Given a new position calculate the angle to it based
@@ -58,17 +61,5 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         setTurnRight(steerAngle);
         waitFor(new TurnCompleteCondition(this));
         return steerAngle;
-    }
-
-    /**
-     * Focus on one target and evade if he shoots
-     *
-     * @param Target
-     * @return void
-     *
-     * @author Sieger van Breugel
-     */
-    protected void evade(Target target) {
-
     }
 }
