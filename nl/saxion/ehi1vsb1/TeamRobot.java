@@ -12,7 +12,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @author Thymo van Beers
      */
-    double calcHeading(double xcmd, double ycmd) {
+    protected double calcHeading(double xcmd, double ycmd) {
         double dX = xcmd - getX();
         double dY = ycmd - getY();
 
@@ -28,7 +28,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @author Thymo van Beers
      */
-    double calcDistance(double xcmd, double ycmd) {
+    protected double calcDistance(double xcmd, double ycmd) {
         double dX = xcmd - getX();
         double dY = ycmd - getY();
 
