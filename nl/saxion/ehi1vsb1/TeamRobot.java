@@ -3,10 +3,14 @@ package nl.saxion.ehi1vsb1;
 import nl.saxion.ehi1vsb1.data.Target;
 import nl.saxion.ehi1vsb1.data.TargetMap;
 import robocode.MoveCompleteCondition;
+import robocode.ScannedRobotEvent;
 import robocode.TurnCompleteCondition;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
     TargetMap targets;
+
+    //TODO: Hook up to TargetMap
+    Target currentTarget = null;
 
     /**
      * Given a new position calculate the angle to it based
@@ -122,6 +126,29 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         }
         setAhead(36);
         waitFor(new TurnCompleteCondition(this));
-        steerTo(calcHeading(target.getxPos(), target.getyPos());
+        steerTo(calcHeading(target.getxPos(), target.getyPos()));
+    }
+
+    /**
+     * Simple scan handler that scans a robot and compares it to the current target.
+     *
+     * @param event - The scanned robot
+     *
+     * @author Thymo van Beers
+     */
+    @Override
+    public void onScannedRobot(ScannedRobotEvent event) {
+        double ownX = getX();
+        double ownY = getY();
+
+        double scanX = event.getDistance()*Math.cos(event.getBearing())+ownX;
+        double scanY = event.getDistance()*Math.sin(event.getBearing())+ownY;
+
+        Target scannedTarget = new Target(scanX, scanY, event.getBearing(), event.getEnergy(),
+                event.getDistance(), event.getHeading(), event.getVelocity(), 0, event.getName());
+
+        if (!currentTarget.equals(scannedTarget)) {
+            currentTarget = scannedTarget;
+        }
     }
 }
