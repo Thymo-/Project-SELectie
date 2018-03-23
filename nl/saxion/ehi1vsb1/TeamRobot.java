@@ -101,11 +101,11 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * @author Sieger van Breugel
      */
     protected void evade(Target target) {
-        double xPos = this.getX;
-        double yPos = this.getY;
+        double xPos = this.getX();
+        double yPos = this.getY();
 
         //If robot is on left side
-        if (xPos < getBattlefieldWidth() / 2) {
+        if (xPos < getBattleFieldWidth() / 2) {
             if (this.getHeading() < 90 || this.getHeading() > 270) {
                 setTurnRight(90);
             } else {
@@ -113,7 +113,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
             }
         }
         //If robot is on right side
-        else if (xPos > getBattlefieldWidth() / 2) {
+        else if (xPos > getBattleFieldWidth() / 2) {
             if (this.getHeading() < 90 || this.getHeading() > 270) {
                 setTurnLeft(90);
             } else {
@@ -122,6 +122,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         }
         setAhead(36);
         waitFor(new TurnCompleteCondition(this));
-        steerTo(calcHeading(target.getxPos, target.getyPos);)
+        steerTo(calcHeading(target.getxPos(), target.getyPos());
     }
 }
