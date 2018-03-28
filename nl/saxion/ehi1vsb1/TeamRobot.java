@@ -2,15 +2,19 @@ package nl.saxion.ehi1vsb1;
 
 import nl.saxion.ehi1vsb1.data.Target;
 import nl.saxion.ehi1vsb1.data.TargetMap;
-import robocode.MoveCompleteCondition;
-import robocode.ScannedRobotEvent;
-import robocode.TurnCompleteCondition;
+import robocode.*;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
-    TargetMap targets = new TargetMap();
+    private RobotStatus status;
+    private TargetMap targets;
 
     //TODO: Hook up to TargetMap
     Target currentTarget = null;
+
+    public TeamRobot() {
+        status = null;
+        targets = new TargetMap();
+    }
 
     /**
      * Given a new position calculate the angle to it based
@@ -145,11 +149,16 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         double scanY = event.getDistance()*Math.sin(event.getBearing())+ownY;
 
         Target scannedTarget = new Target(scanX, scanY, event.getBearing(), event.getEnergy(),
-                event.getDistance(), event.getHeading(), event.getVelocity(), 0, event.getName());
+                event.getDistance(), event.getHeading(), event.getVelocity(), status.getRoundNum(), event.getName());
 
-        if (currentTarget == null || !currentTarget.equals(scannedTarget)) {
-            currentTarget = scannedTarget;
+        if (!targets.exists(scannedTarget)) {
+            targets.addTarget(scannedTarget);
         }
+    }
+
+    @Override
+    public void onStatus(StatusEvent e) {
+        status = e.getStatus();
     }
 
     public void run() {

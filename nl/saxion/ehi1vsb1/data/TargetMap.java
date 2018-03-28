@@ -101,9 +101,9 @@ public class TargetMap {
      * @return true - target exists; false - target does not exist
      * @author Thymo van Beers
      */
-    public boolean compare(Target target) {
+    public boolean exists(Target target) {
         for (int i = 0; i < targetList.size(); i++) {
-            if (targetList.get(i).getName().equals(target.getName()))
+            if (targetList.get(i).equals(target))
                 return true;
         }
 
