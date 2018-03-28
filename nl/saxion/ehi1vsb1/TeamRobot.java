@@ -1,8 +1,10 @@
 package nl.saxion.ehi1vsb1;
 
-import nl.saxion.ehi1vsb1.data.Target;
-import nl.saxion.ehi1vsb1.data.TargetMap;
+import nl.saxion.ehi1vsb1.data.*;
+import nl.saxion.ehi1vsb1.messages.*;
 import robocode.*;
+
+import java.io.IOException;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
     protected RobotStatus status;
@@ -164,8 +166,24 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         Target scannedTarget = new Target(scanX, scanY, event.getBearing(), event.getEnergy(),
                 event.getDistance(), event.getHeading(), event.getVelocity(), status.getRoundNum(), event.getName());
 
+        try {
+            sendMessage("target_found", new TargetMessage(scannedTarget));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (!targets.exists(scannedTarget)) {
             targets.addTarget(scannedTarget);
+        }
+    }
+
+    @Override
+    public void onMessageReceived(MessageEvent event) {
+        if (event.getMessage() instanceof TargetMessage) {
+            Target messageTarget = ((TargetMessage) event.getMessage()).getTarget();
+            if (!targets.exists(messageTarget)) {
+                targets.addTarget(messageTarget);
+            }
         }
     }
 
