@@ -15,6 +15,13 @@ public class EvadeBot extends TeamRobot {
         turnRadarLeft(Double.POSITIVE_INFINITY);
     }
 
+    /**
+     * Customized onScannedRobot event that uses the super.onScannedRobot
+     *
+     * @param event - The scanned robot
+     *
+     * @author Sieger van Breugel
+     */
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
@@ -27,6 +34,7 @@ public class EvadeBot extends TeamRobot {
                 super.evade(currentTarget);
             }
             else {
+                turnGunLeft(currentTarget.getHeading());
                 fire(100);
             }
         }
