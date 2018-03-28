@@ -7,6 +7,7 @@ import java.util.List;
  * Map containing targets
  *
  * @author Thymo van Beers
+ * @author Tim Hofman
  */
 public class TargetMap {
     private List<Target> targetList;
@@ -80,23 +81,16 @@ public class TargetMap {
      * @author Tim Hofman
      */
     public void addTarget(Target target) {
-        boolean addTarget = false;
-
         for (int i = 0; i < targetList.size(); i++) {
             if (target.getName().equals(targetList.get(i).getName())) {
-                addTarget = false;
                 if (target.getTurn() > targetList.get(i).getTurn()) {
                     targetList.remove(i);
                     targetList.add(target);
                 }
                 break;
             } else {
-                addTarget = true;
+                targetList.add(target);
             }
-        }
-
-        if (addTarget) {
-            targetList.add(target);
         }
     }
 }
