@@ -5,8 +5,8 @@ import nl.saxion.ehi1vsb1.data.TargetMap;
 import robocode.*;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
-    private RobotStatus status;
-    private TargetMap targets;
+    protected RobotStatus status;
+    protected TargetMap targets;
 
     //TODO: Hook up to TargetMap
     Target currentTarget = null;
@@ -163,5 +163,15 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     }
 
     public void run() {
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        scanAll();
+    }
+
+    private void scanAll() {
+        setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
+        setTurnGunRight(360);   // Turn gun one rotation for faster scanning
+        execute();
+        waitFor(new GunTurnCompleteCondition(this));
     }
 }
