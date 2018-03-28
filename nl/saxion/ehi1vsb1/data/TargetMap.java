@@ -27,7 +27,6 @@ public class TargetMap {
      * @author Tim Hofman
      */
     public Target getClosest(double xPos, double yPos) {
-        //TODO: Find closest target based on given position
         Target closestTarget = new Target();
 
         for (int i = 0; i < targetList.size(); i++) {
@@ -56,6 +55,16 @@ public class TargetMap {
         return closestTarget;
     }
 
+    /**
+     * Get the X or Y distance to the Target
+     *
+     * @param pos X or Y position
+     * @param targetPos X or Y position of Target
+     *
+     * @return The X or Y distance to the Target
+     *
+     * @author Tim Hofman
+     */
     private double distanceToTarget(double pos, double targetPos) {
         if (pos >= targetPos) {
             return (pos - targetPos);
@@ -64,9 +73,20 @@ public class TargetMap {
         }
     }
 
+    /**
+     * Adds a Target to the list with targets
+     *
+     * @param target The target that needs to be added to the list
+     *
+     * @author Tim Hofman
+     */
     public void addTarget(Target target) {
         for (int i = 0; i < targetList.size(); i++) {
             if (target.getName().equals(targetList.get(i).getName())) {
+                if (target.getTurn() > targetList.get(i).getTurn()) {
+                    targetList.remove(i);
+                    targetList.add(target);
+                }
                 break;
             } else {
                 targetList.add(target);
