@@ -7,7 +7,7 @@ import robocode.ScannedRobotEvent;
 import robocode.TurnCompleteCondition;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
-    TargetMap targets;
+    TargetMap targets = new TargetMap();
 
     //TODO: Hook up to TargetMap
     Target currentTarget = null;
@@ -49,7 +49,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * This method blocks
      *
      * @param heading Desired heading (north referenced)
-     * @return The calculated steering angl
+     * @return The calculated steering angle
      * @author Thymo van Beers
      */
     double steerTo(double heading) {
@@ -75,7 +75,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * @author Thymo van Beers
      */
     void moveTo(double xcmd, double ycmd) {
-        double fieldHeigt = getBattleFieldHeight();
+        double fieldHeight = getBattleFieldHeight();
         double fieldWidth = getBattleFieldWidth();
         double botWidth = getWidth();
         double botHeight = getHeight();
@@ -89,8 +89,8 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
         if (ycmd < botHeight) {
             ycmd = botHeight;
-        } else if (ycmd > fieldHeigt - botHeight) {
-            ycmd = fieldHeigt - botHeight;
+        } else if (ycmd > fieldHeight - botHeight) {
+            ycmd = fieldHeight - botHeight;
         }
 
         steerTo(calcHeading(xcmd, ycmd));
@@ -147,8 +147,11 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         Target scannedTarget = new Target(scanX, scanY, event.getBearing(), event.getEnergy(),
                 event.getDistance(), event.getHeading(), event.getVelocity(), 0, event.getName());
 
-        if (!currentTarget.equals(scannedTarget)) {
+        if (currentTarget == null || !currentTarget.equals(scannedTarget)) {
             currentTarget = scannedTarget;
         }
+    }
+
+    public void run() {
     }
 }
