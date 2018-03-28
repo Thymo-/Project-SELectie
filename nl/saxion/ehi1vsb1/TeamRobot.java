@@ -7,6 +7,10 @@ import robocode.*;
 abstract public class TeamRobot extends robocode.TeamRobot {
     protected RobotStatus status;
     protected TargetMap targets;
+    private int scanMode;
+
+    private static final int SCAN_SEARCH = 0;
+    private static final int SCAN_LOCK = 1;
 
     //TODO: Hook up to TargetMap
     Target currentTarget = null;
@@ -14,6 +18,15 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     public TeamRobot() {
         status = null;
         targets = new TargetMap();
+        scanMode = SCAN_SEARCH;
+    }
+
+    public int getScanMode() {
+        return scanMode;
+    }
+
+    public void setScanMode(int scanMode) {
+        this.scanMode = scanMode;
     }
 
     /**
