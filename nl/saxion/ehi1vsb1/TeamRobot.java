@@ -162,5 +162,15 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     }
 
     public void run() {
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+        scanAll();
+    }
+
+    private void scanAll() {
+        setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
+        setTurnGunRight(360);   // Turn gun one rotation for faster scanning
+        execute();
+        waitFor(new GunTurnCompleteCondition(this));
     }
 }
