@@ -93,4 +93,20 @@ public class TargetMap {
             }
         }
     }
+
+    /**
+     * Check if target is already in map
+     *
+     * @param target Target to find
+     * @return true - target exists; false - target does not exist
+     * @author Thymo van Beers
+     */
+    public boolean exists(Target target) {
+        for (int i = 0; i < targetList.size(); i++) {
+            if (targetList.get(i).equals(target))
+                return true;
+        }
+
+        return false;
+    }
 }

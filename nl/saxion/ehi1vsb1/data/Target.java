@@ -50,6 +50,24 @@ public class Target implements Comparable<Target> {
         return Integer.compare(this.getTurn(), o.getTurn());
     }
 
+    /**
+     * Check if target is already in map
+     *
+     * @param obj Target to check
+     * @return true - target equals; false - target does not equal
+     * @author Thymo van Beers
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Target) {
+            Target t = (Target) obj;
+            if (name.equals(t.getName()) && turn == t.getTurn())
+                return true;
+        }
+
+        return false;
+    }
+
     public double getxPos() {
         return xPos;
     }
