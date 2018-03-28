@@ -29,9 +29,11 @@ public class TargetMap {
     public Target getClosest(double xPos, double yPos) {
         Target closestTarget = new Target();
 
+        System.out.println(targetList.size());
         for (int i = 0; i < targetList.size(); i++) {
             if (i == 0) {
                 closestTarget = targetList.get(i);
+
             } else {
                 double distanceToClosestTargetXPos = distanceToTarget(xPos, closestTarget.getxPos());
                 double distanceToClosestTargetYPos = distanceToTarget(yPos, closestTarget.getyPos());
@@ -40,6 +42,7 @@ public class TargetMap {
 
                 if (distanceToTargetXPos < distanceToClosestTargetXPos && distanceToTargetYPos < distanceToClosestTargetYPos) {
                     closestTarget = targetList.get(i);
+                    System.out.println(closestTarget.getName());
                 } else if (distanceToTargetXPos < distanceToClosestTargetXPos) {
                     if (distanceToTargetXPos + distanceToTargetYPos < distanceToClosestTargetXPos + distanceToClosestTargetYPos) {
                         closestTarget = targetList.get(i);
@@ -81,16 +84,23 @@ public class TargetMap {
      * @author Tim Hofman
      */
     public void addTarget(Target target) {
+        boolean addTarget = true;
+
         for (int i = 0; i < targetList.size(); i++) {
-            if (target.getName().equals(targetList.get(i).getName())) {
+            if (exists(target)) {
                 if (target.getTurn() > targetList.get(i).getTurn()) {
                     targetList.remove(i);
                     targetList.add(target);
                 }
+                addTarget = false;
                 break;
             } else {
-                targetList.add(target);
+                addTarget = true;
             }
+        }
+
+        if (addTarget) {
+            targetList.add(target);
         }
     }
 
@@ -101,10 +111,11 @@ public class TargetMap {
      * @return true - target exists; false - target does not exist
      * @author Thymo van Beers
      */
-    public boolean exists(Target target) {
+    private boolean exists(Target target) {
         for (int i = 0; i < targetList.size(); i++) {
-            if (targetList.get(i).equals(target))
+            if (targetList.get(i).equals(target)) {
                 return true;
+            }
         }
 
         return false;

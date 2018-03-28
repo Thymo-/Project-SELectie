@@ -152,9 +152,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         Target scannedTarget = new Target(scanX, scanY, event.getBearing(), event.getEnergy(),
                 event.getDistance(), event.getHeading(), event.getVelocity(), status.getRoundNum(), event.getName());
 
-        if (!targets.exists(scannedTarget)) {
-            targets.addTarget(scannedTarget);
-        }
+        targets.addTarget(scannedTarget);
     }
 
     @Override

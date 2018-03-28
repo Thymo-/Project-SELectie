@@ -1,12 +1,11 @@
 package nl.saxion.ehi1vsb1;
 
+import nl.saxion.ehi1vsb1.data.Target;
 import nl.saxion.ehi1vsb1.data.TargetMap;
 import robocode.ScannedRobotEvent;
 import robocode.TurnCompleteCondition;
 
 public class CamperBot extends TeamRobot {
-
-    TargetMap targetMap = new TargetMap();
 
     private enum Corner {
         LOWER_LEFT, UPPER_LEFT, LOWER_RIGHT, UPPER_RIGHT
@@ -62,4 +61,15 @@ public class CamperBot extends TeamRobot {
             corner = Corner.UPPER_LEFT;
         }
     }
+
+    @Override
+    public void onScannedRobot(ScannedRobotEvent event) {
+        super.onScannedRobot(event);
+        shoot();
+    }
+
+    private void shoot() {
+        Target target = targets.getClosest(getX(), getY());
+    }
+
 }
