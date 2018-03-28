@@ -101,7 +101,8 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     /**
      * Evade and turn to target
      *
-     * @param target
+     * @param target Target to evade
+     *
      * @author Sieger van Breugel
      */
     protected void evade(Target target) {
