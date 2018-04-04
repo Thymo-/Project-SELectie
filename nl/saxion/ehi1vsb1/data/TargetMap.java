@@ -27,7 +27,7 @@ public class TargetMap {
      * @author Tim Hofman
      */
     public Target getClosest(double xPos, double yPos) {
-        Target closestTarget = new Target();
+        Target closestTarget = null;
 
         System.out.println(targetList.size());
         for (int i = 0; i < targetList.size(); i++) {

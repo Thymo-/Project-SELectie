@@ -43,6 +43,12 @@ public class CamperBot extends TeamRobot {
         }
     }
 
+    /**
+     * Moves the robot alongside the walls based
+     * on the current position.
+     *
+     * @author Tim Hofman
+     */
     private void driveAlongsideWall() {
         double battleFieldWidth = getBattleFieldWidth();
         double battleFieldHeight = getBattleFieldHeight();
@@ -65,11 +71,6 @@ public class CamperBot extends TeamRobot {
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
-        shoot();
-    }
-
-    private void shoot() {
-        Target target = targets.getClosest(getX(), getY());
     }
 
 }
