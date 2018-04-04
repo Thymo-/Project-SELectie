@@ -1,11 +1,13 @@
 package nl.saxion.ehi1vsb1.data;
 
+import java.io.Serializable;
+
 /**
  * Target data
  *
  * @author Tim Hofman
  */
-public class Target implements Comparable<Target> {
+public class Target implements Comparable<Target>, Serializable {
 
     private double xPos;
     private double yPos;
