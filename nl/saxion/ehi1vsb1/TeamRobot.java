@@ -14,9 +14,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     private static final int SCAN_SEARCH = 0;
     private static final int SCAN_LOCK = 1;
 
-    //TODO: Hook up to TargetMap
-    Target currentTarget = null;
-
     public TeamRobot() {
         status = null;
         targets = new TargetMap();
@@ -37,7 +34,9 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @param xcmd Desired X position
      * @param ycmd Desired Y position
+     *
      * @return double: Required steering angle
+     *
      * @author Thymo van Beers
      */
     double calcHeading(double xcmd, double ycmd) {
@@ -52,7 +51,9 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @param xcmd Desired X position
      * @param ycmd Desired Y position
+     *
      * @return double: Distance to point
+     *
      * @author Thymo van Beers
      */
     double calcDistance(double xcmd, double ycmd) {
@@ -68,7 +69,9 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * This method blocks
      *
      * @param heading Desired heading (north referenced)
+     *
      * @return The calculated steering angle
+     *
      * @author Thymo van Beers
      */
     double steerTo(double heading) {
@@ -91,6 +94,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @param xcmd X position
      * @param ycmd Y position
+     *
      * @author Thymo van Beers
      */
     void moveTo(double xcmd, double ycmd) {
