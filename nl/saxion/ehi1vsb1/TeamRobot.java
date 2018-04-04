@@ -163,8 +163,13 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         double enemyX = (getX() + Math.sin(angle) * event.getDistance());
         double enemyY = (getY() + Math.cos(angle) * event.getDistance());
 
+        boolean friendly = false;
+
+        if (event.getName().contains("ehi1vsb1")) {
+            friendly = true;
+        }
         Target scannedTarget = new Target(enemyX, enemyY, event.getBearing(), event.getEnergy(),
-                event.getDistance(), event.getHeading(), event.getVelocity(), (int) getTime(), event.getName());
+                event.getDistance(), event.getHeading(), event.getVelocity(), friendly, (int) getTime(), event.getName());
 
         try {
             sendMessage("target_found", new TargetMessage(scannedTarget));
