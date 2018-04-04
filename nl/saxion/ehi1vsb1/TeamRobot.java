@@ -184,17 +184,34 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         }
     }
 
+    /**
+     * Update status each round
+     *
+     * @param e StatusEvent
+     *
+     * @author Thymo van Beers
+     */
     @Override
     public void onStatus(StatusEvent e) {
         status = e.getStatus();
     }
 
+    /**
+     * Abstract run method for all robots
+     *
+     * @author Thymo van Beers
+     */
     public void run() {
         setAdjustGunForRobotTurn(true);
         setAdjustRadarForGunTurn(true);
         scanAll();
     }
 
+    /**
+     * Enable scanning forever
+     *
+     * @author Thymo van Beers
+     */
     private void scanAll() {
         setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
         setTurnGunRight(360);   // Turn gun one rotation for faster scanning
