@@ -72,5 +72,4 @@ public class CamperBot extends TeamRobot {
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
     }
-
 }

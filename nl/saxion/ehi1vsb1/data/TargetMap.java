@@ -85,12 +85,21 @@ public class TargetMap {
      */
     public void addTarget(Target target) {
         boolean addTarget = true;
+        int targetToRemove = -1;
 
         for (int i = 0; i < targetList.size(); i++) {
             if (exists(target)) {
+                for (int j = 0; j < targetList.size(); j++) {
+                    if (target.getName().equals(targetList.get(j).getName())) {
+                        targetToRemove = j;
+                        break;
+                    }
+                }
                 if (target.getTurn() > targetList.get(i).getTurn()) {
-                    targetList.remove(i);
                     targetList.add(target);
+                }
+                if (targetToRemove >= 0) {
+                    targetList.remove(targetList.get(targetToRemove));
                 }
                 addTarget = false;
                 break;
@@ -101,6 +110,23 @@ public class TargetMap {
 
         if (addTarget) {
             targetList.add(target);
+        }
+        printTargets();
+    }
+
+    private void removeTarget(Target targetToRemove) {
+        for (Target target : targetList) {
+            if (target.getName().equals(targetToRemove.getName())) {
+                targetList.remove(target);
+                break;
+            }
+        }
+    }
+
+    private void printTargets() {
+        System.out.println("\n----");
+        for (Target target : targetList) {
+            System.out.println("Target " + target.getName() + ", X: " + target.getxPos() + ", Y: " + target.getyPos() + ", Turn: " + target.getTurn());
         }
     }
 
@@ -113,7 +139,8 @@ public class TargetMap {
      */
     private boolean exists(Target target) {
         for (int i = 0; i < targetList.size(); i++) {
-            if (targetList.get(i).equals(target)) {
+            if (target.getName().equals(targetList.get(i).getName())) {
+                targetList.remove(targetList.get(i));
                 return true;
             }
         }

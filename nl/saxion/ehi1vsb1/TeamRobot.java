@@ -7,7 +7,6 @@ import robocode.*;
 import java.io.IOException;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
-    protected RobotStatus status;
     protected TargetMap targets;
     private int scanMode;
 
@@ -18,7 +17,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     Target currentTarget = null;
 
     public TeamRobot() {
-        status = null;
         targets = new TargetMap();
         scanMode = SCAN_SEARCH;
     }
@@ -158,14 +156,15 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      */
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
-        double ownX = getX();
-        double ownY = getY();
+        double angleToEnemy = event.getBearing();
 
-        double scanX = event.getDistance()*Math.cos(event.getBearing())+ownX;
-        double scanY = event.getDistance()*Math.sin(event.getBearing())+ownY;
+        double angle = Math.toRadians((getHeading() + angleToEnemy % 360));
 
-        Target scannedTarget = new Target(scanX, scanY, event.getBearing(), event.getEnergy(),
-                event.getDistance(), event.getHeading(), event.getVelocity(), status.getRoundNum(), event.getName());
+        double enemyX = (getX() + Math.sin(angle) * event.getDistance());
+        double enemyY = (getY() + Math.cos(angle) * event.getDistance());
+
+        Target scannedTarget = new Target(enemyX, enemyY, event.getBearing(), event.getEnergy(),
+                event.getDistance(), event.getHeading(), event.getVelocity(), (int) getTime(), event.getName());
 
         try {
             sendMessage("target_found", new TargetMessage(scannedTarget));
@@ -182,11 +181,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
             Target messageTarget = ((TargetMessage) event.getMessage()).getTarget();
             targets.addTarget(messageTarget);
         }
-    }
-
-    @Override
-    public void onStatus(StatusEvent e) {
-        status = e.getStatus();
     }
 
     public void run() {
