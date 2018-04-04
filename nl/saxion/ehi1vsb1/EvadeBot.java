@@ -24,6 +24,7 @@ public class EvadeBot extends TeamRobot {
      */
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
+        out.println("Robot scanned");
         super.onScannedRobot(event);
         turnRadarLeft(currentTarget.getHeading());
 
