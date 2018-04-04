@@ -1,5 +1,7 @@
 package nl.saxion.ehi1vsb1.data;
 
+import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,49 +86,47 @@ public class TargetMap {
      * @author Tim Hofman
      */
     public void addTarget(Target target) {
-        boolean addTarget = true;
-        int targetToRemove = -1;
+        Target targetToRemove = null;
 
-        for (int i = 0; i < targetList.size(); i++) {
-            if (exists(target)) {
-                for (int j = 0; j < targetList.size(); j++) {
-                    if (target.getName().equals(targetList.get(j).getName())) {
-                        targetToRemove = j;
-                        break;
-                    }
+        if (exists(target)) {
+            for (Target targetToCheck : targetList) {
+                if (target.getName().equals(targetToCheck.getName())) {
+                    targetToRemove = targetToCheck;
+                    break;
                 }
+            }
+
+            for (int i = 0; i < targetList.size(); i++) {
                 if (target.getTurn() > targetList.get(i).getTurn()) {
                     targetList.add(target);
+                    if (targetToRemove != null) {
+                        targetList.remove(targetToRemove);
+                    }
                 }
-                if (targetToRemove >= 0) {
-                    targetList.remove(targetList.get(targetToRemove));
-                }
-                addTarget = false;
-                break;
-            } else {
-                addTarget = true;
             }
-        }
-
-        if (addTarget) {
+        } else {
             targetList.add(target);
         }
+
         printTargets();
     }
 
-    private void removeTarget(Target targetToRemove) {
-        for (Target target : targetList) {
-            if (target.getName().equals(targetToRemove.getName())) {
-                targetList.remove(target);
-                break;
-            }
-        }
-    }
-
+    /**
+     * Prints all targets from the list with targets.
+     *
+     * @author Tim Hofman
+     */
     private void printTargets() {
-        System.out.println("\n----");
-        for (Target target : targetList) {
-            System.out.println("Target " + target.getName() + ", X: " + target.getxPos() + ", Y: " + target.getyPos() + ", Turn: " + target.getTurn());
+        if (targetList.size() > 0) {
+            System.out.println("\n--------\nTargets");
+            for (Target target : targetList) {
+                System.out.println("  Target: "   + target.getName()
+                                    + "\n    X Position: " + target.getxPos()
+                                    + "\n    Y Position: " + target.getyPos()
+                                    + "\n    Friendly:   " + target.isFriendly()
+                                    + "\n    Turn:       " + target.getTurn()
+                                    + "\n");
+            }
         }
     }
 
@@ -138,9 +138,8 @@ public class TargetMap {
      * @author Thymo van Beers
      */
     private boolean exists(Target target) {
-        for (int i = 0; i < targetList.size(); i++) {
-            if (target.getName().equals(targetList.get(i).getName())) {
-                targetList.remove(targetList.get(i));
+        for (Target targetToCheck : targetList) {
+            if (target.getName().equals(targetToCheck.getName())) {
                 return true;
             }
         }
