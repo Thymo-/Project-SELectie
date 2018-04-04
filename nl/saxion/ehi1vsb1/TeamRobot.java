@@ -173,18 +173,14 @@ abstract public class TeamRobot extends robocode.TeamRobot {
             e.printStackTrace();
         }
 
-        if (!targets.exists(scannedTarget)) {
-            targets.addTarget(scannedTarget);
-        }
+        targets.addTarget(scannedTarget);
     }
 
     @Override
     public void onMessageReceived(MessageEvent event) {
         if (event.getMessage() instanceof TargetMessage) {
             Target messageTarget = ((TargetMessage) event.getMessage()).getTarget();
-            if (!targets.exists(messageTarget)) {
-                targets.addTarget(messageTarget);
-            }
+            targets.addTarget(messageTarget);
         }
     }
 
