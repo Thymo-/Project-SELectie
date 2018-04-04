@@ -96,8 +96,8 @@ public class TargetMap {
                 }
             }
 
-            for (Target targetToCheck : targetList) {
-                if (target.getTurn() > targetToCheck.getTurn()) {
+            for (int i = 0; i < targetList.size(); i++) {
+                if (target.getTurn() > targetList.get(i).getTurn()) {
                     targetList.add(target);
                     if (targetToRemove != null) {
                         targetList.remove(targetToRemove);
