@@ -143,7 +143,8 @@ abstract public class TeamRobot extends robocode.TeamRobot {
             }
         }
         setAhead(36);
-        waitFor(new TurnCompleteCondition(this));
+        execute();
+        //waitFor(new TurnCompleteCondition(this));
         steerTo(calcHeading(target.getxPos(), target.getyPos()));
     }
 

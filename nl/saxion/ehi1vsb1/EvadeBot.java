@@ -1,8 +1,13 @@
 package nl.saxion.ehi1vsb1;
 
+import nl.saxion.ehi1vsb1.data.Target;
+import robocode.RadarTurnCompleteCondition;
 import robocode.ScannedRobotEvent;
 
 public class EvadeBot extends TeamRobot {
+    private Target currentTarget;
+    private double energy = 0;
+
     /**
      * Main run method
      *
@@ -10,34 +15,47 @@ public class EvadeBot extends TeamRobot {
      */
     @Override
     public void run() {
-        super.run();
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
 
-        turnRadarLeft(Double.POSITIVE_INFINITY);
+        while (true) {
+            setTurnRadarRight(Double.POSITIVE_INFINITY);
+            waitFor(new RadarTurnCompleteCondition(this));
+        }
     }
 
     /**
      * Customized onScannedRobot event that uses the super.onScannedRobot
      *
      * @param event - The scanned robot
-     *
      * @author Sieger van Breugel
      */
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
-        out.println("Robot scanned");
         super.onScannedRobot(event);
-        turnRadarLeft(currentTarget.getHeading());
 
-        double energy = currentTarget.getEnergy();
-        while (currentTarget.getEnergy() > 0) {
-            scan();
+        currentTarget = targets.getTarget(event.getName());
+
+        if (energy == 0) {
+            energy = currentTarget.getEnergy();
+        }
+
+        if (!currentTarget.isFriendly()) {
+            double followRadar = getHeading() + currentTarget.getBearing() - getRadarHeading();
+            double followGun = getHeading() + currentTarget.getBearing() - getGunHeading();
+            turnRadarRight(followRadar);
+            turnGunRight(followGun);
+
             if (currentTarget.getEnergy() < energy) {
                 super.evade(currentTarget);
+                energy = 0;
+            } else {
+                fire(3);
             }
-            else {
-                turnGunLeft(currentTarget.getHeading());
-                fire(100);
-            }
+        }
+
+        if (currentTarget.getEnergy() <= 0) {
+            currentTarget = null;
         }
     }
 }

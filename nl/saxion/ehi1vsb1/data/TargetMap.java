@@ -1,6 +1,7 @@
 package nl.saxion.ehi1vsb1.data;
 
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
+//Gives error - Sieger
+//import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,5 +146,21 @@ public class TargetMap {
         }
 
         return false;
+    }
+
+    /**
+     * Get a Target from the targetList based on name
+     *
+     * @param targetName
+     * @return Target from targetList
+     * @author Sieger van Breugel
+     */
+    public Target getTarget(String targetName) {
+        for (Target target : targetList) {
+            if (targetName.equals(target.getName())) {
+                return target;
+            }
+        }
+        return null;
     }
 }
