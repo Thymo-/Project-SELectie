@@ -1,7 +1,5 @@
 package nl.saxion.ehi1vsb1.data;
 
-import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
-
 import java.util.ArrayList;
 import java.util.List;
 
