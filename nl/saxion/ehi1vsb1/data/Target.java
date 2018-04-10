@@ -18,6 +18,7 @@ public class Target implements Comparable<Target>, Serializable {
     private double distance;
     private double heading;
     private double velocity;
+    private boolean friendly;
 
     private int turn;
 
@@ -26,7 +27,7 @@ public class Target implements Comparable<Target>, Serializable {
     public Target() {
     }
 
-    public Target(double xPos, double yPos, double bearing, double energy, double distance, double heading, double velocity, int turn, String name) {
+    public Target(double xPos, double yPos, double bearing, double energy, double distance, double heading, double velocity, boolean friendly, int turn, String name) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.bearing = bearing;
@@ -34,6 +35,7 @@ public class Target implements Comparable<Target>, Serializable {
         this.distance = distance;
         this.heading = heading;
         this.velocity = velocity;
+        this.friendly = friendly;
         this.turn = turn;
         this.name = name;
     }
@@ -127,6 +129,14 @@ public class Target implements Comparable<Target>, Serializable {
 
     public void setVelocity(double velocity) {
         this.velocity = velocity;
+    }
+
+    public boolean isFriendly() {
+        return friendly;
+    }
+
+    public void setFriendly(boolean friendly) {
+        this.friendly = friendly;
     }
 
     public int getTurn() {

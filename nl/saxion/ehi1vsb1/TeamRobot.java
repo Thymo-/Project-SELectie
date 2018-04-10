@@ -7,7 +7,6 @@ import robocode.*;
 import java.io.IOException;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
-    protected RobotStatus status;
     protected TargetMap targets;
     private int scanMode;
 
@@ -15,7 +14,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     private static final int SCAN_LOCK = 1;
 
     public TeamRobot() {
-        status = null;
         targets = new TargetMap();
         scanMode = SCAN_SEARCH;
     }
@@ -149,7 +147,8 @@ abstract public class TeamRobot extends robocode.TeamRobot {
             }
         }
         setAhead(36);
-        waitFor(new TurnCompleteCondition(this));
+        execute();
+        //waitFor(new TurnCompleteCondition(this));
         steerTo(calcHeading(target.getxPos(), target.getyPos()));
     }
 
@@ -162,14 +161,20 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      */
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
-        double ownX = getX();
-        double ownY = getY();
+        double angleToEnemy = event.getBearing();
 
-        double scanX = event.getDistance()*Math.cos(event.getBearing())+ownX;
-        double scanY = event.getDistance()*Math.sin(event.getBearing())+ownY;
+        double angle = Math.toRadians((getHeading() + angleToEnemy % 360));
 
-        Target scannedTarget = new Target(scanX, scanY, event.getBearing(), event.getEnergy(),
-                event.getDistance(), event.getHeading(), event.getVelocity(), status.getRoundNum(), event.getName());
+        double enemyX = (getX() + Math.sin(angle) * event.getDistance());
+        double enemyY = (getY() + Math.cos(angle) * event.getDistance());
+
+        boolean friendly = false;
+
+        if (event.getName().contains("ehi1vsb1")) {
+            friendly = true;
+        }
+        Target scannedTarget = new Target(enemyX, enemyY, event.getBearing(), event.getEnergy(),
+                event.getDistance(), event.getHeading(), event.getVelocity(), friendly, (int) getTime(), event.getName());
 
         try {
             sendMessage("target_found", new TargetMessage(scannedTarget));
