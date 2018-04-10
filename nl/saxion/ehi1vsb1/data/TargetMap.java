@@ -1,5 +1,7 @@
 package nl.saxion.ehi1vsb1.data;
 
+import com.sun.tools.doclets.formats.html.SourceToHTMLConverter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,23 +86,47 @@ public class TargetMap {
      * @author Tim Hofman
      */
     public void addTarget(Target target) {
-        boolean addTarget = true;
+        Target targetToRemove = null;
 
-        for (int i = 0; i < targetList.size(); i++) {
-            if (exists(target)) {
-                if (target.getTurn() > targetList.get(i).getTurn()) {
-                    targetList.remove(i);
-                    targetList.add(target);
+        if (exists(target)) {
+            for (Target targetToCheck : targetList) {
+                if (target.getName().equals(targetToCheck.getName())) {
+                    targetToRemove = targetToCheck;
+                    break;
                 }
-                addTarget = false;
-                break;
-            } else {
-                addTarget = true;
             }
+
+            for (int i = 0; i < targetList.size(); i++) {
+                if (target.getTurn() > targetList.get(i).getTurn()) {
+                    targetList.add(target);
+                    if (targetToRemove != null) {
+                        targetList.remove(targetToRemove);
+                    }
+                }
+            }
+        } else {
+            targetList.add(target);
         }
 
-        if (addTarget) {
-            targetList.add(target);
+        printTargets();
+    }
+
+    /**
+     * Prints all targets from the list with targets.
+     *
+     * @author Tim Hofman
+     */
+    private void printTargets() {
+        if (targetList.size() > 0) {
+            System.out.println("\n--------\nTargets");
+            for (Target target : targetList) {
+                System.out.println("  Target: "   + target.getName()
+                                    + "\n    X Position: " + target.getxPos()
+                                    + "\n    Y Position: " + target.getyPos()
+                                    + "\n    Friendly:   " + target.isFriendly()
+                                    + "\n    Turn:       " + target.getTurn()
+                                    + "\n");
+            }
         }
     }
 
@@ -112,8 +138,8 @@ public class TargetMap {
      * @author Thymo van Beers
      */
     private boolean exists(Target target) {
-        for (int i = 0; i < targetList.size(); i++) {
-            if (targetList.get(i).equals(target)) {
+        for (Target targetToCheck : targetList) {
+            if (target.getName().equals(targetToCheck.getName())) {
                 return true;
             }
         }

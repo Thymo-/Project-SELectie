@@ -1,10 +1,13 @@
 package nl.saxion.ehi1vsb1;
 
-import nl.saxion.ehi1vsb1.data.Target;
-import nl.saxion.ehi1vsb1.data.TargetMap;
+import robocode.MoveCompleteCondition;
 import robocode.ScannedRobotEvent;
-import robocode.TurnCompleteCondition;
 
+/**
+ * Implementation of the CamperBot
+ *
+ * @author Tim Hofman
+ */
 public class CamperBot extends TeamRobot {
 
     private enum Corner {
@@ -15,7 +18,11 @@ public class CamperBot extends TeamRobot {
 
     @Override
     public void run() {
-        super.run();
+        setTurnLeft(getHeading() % 90);
+        setTurnGunLeft(90);
+
+        execute();
+        waitFor(new MoveCompleteCondition(this));
 
         double x = getX();
         double y = getY();
@@ -37,8 +44,7 @@ public class CamperBot extends TeamRobot {
         }
 
         while (true) {
-            setTurnRadarRight(Double.POSITIVE_INFINITY);
-            execute();
+            scan();
             driveAlongsideWall();
         }
     }
@@ -71,6 +77,18 @@ public class CamperBot extends TeamRobot {
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
-    }
 
+        double angleToEnemy = event.getBearing();
+
+        double angle = Math.toRadians((getHeading() + angleToEnemy % 360));
+
+        double enemyX = (getX() + Math.sin(angle) * event.getDistance());
+        double enemyY = (getY() + Math.cos(angle) * event.getDistance());
+
+        if (calcDistance(enemyX, enemyY) < 350) {
+            fire(2);
+        } else if (calcDistance(enemyX, enemyY) < 100) {
+            fire(10);
+        }
+     }
 }
