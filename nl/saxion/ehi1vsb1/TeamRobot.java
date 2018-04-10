@@ -213,7 +213,8 @@ abstract public class TeamRobot extends robocode.TeamRobot {
                 execute();
             }
         } else if (scanMode == SCAN_LOCK) {
-
+            out.println("Radar has been switched to unimplemented mode!");
+            scanMode = SCAN_SEARCH;
         }
     }
 
