@@ -1,11 +1,10 @@
 package nl.saxion.ehi1vsb1;
 
 import nl.saxion.ehi1vsb1.messages.SideMessage;
-import robocode.HitRobotEvent;
-import robocode.MoveCompleteCondition;
-import robocode.ScannedRobotEvent;
+import robocode.*;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * Implementation of the CamperBot
@@ -26,37 +25,38 @@ public class CamperBot extends TeamRobot {
 
     @Override
     public void run() {
-        setTurnLeft(getHeading() % 90);
-        setTurnGunLeft(90);
-        
-        side = Side.LEFT_SIDE;
-        try {
-            sendMessage("side_of_wall", new SideMessage(side));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        execute();
-        waitFor(new MoveCompleteCondition(this));
-
         double x = getX();
         double y = getY();
         double battleFieldWidth = getBattleFieldWidth();
         double battleFieldHeight = getBattleFieldHeight();
 
         if (x < battleFieldWidth/2) {
+            side = Side.LEFT_SIDE;
             if (y < battleFieldHeight/2) {
                 corner = Corner.LOWER_LEFT;
             } else {
                 corner = Corner.UPPER_LEFT;
             }
         } else {
+            side = Side.RIGHT_SIDE;
             if (y < battleFieldHeight/2) {
                 corner = Corner.LOWER_RIGHT;
             } else {
                 corner = Corner.UPPER_RIGHT;
             }
         }
+
+        try {
+            sendMessage("nl.saxion.ehi1vsb1.CamperBot* (2)", new SideMessage(this.side));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        setTurnLeft(getHeading() % 90);
+        setTurnGunLeft(90);
+
+        execute();
+        waitFor(new MoveCompleteCondition(this));
 
         while (true) {
             scan();
@@ -74,18 +74,28 @@ public class CamperBot extends TeamRobot {
         double battleFieldWidth = getBattleFieldWidth();
         double battleFieldHeight = getBattleFieldHeight();
 
-        if (corner == Corner.LOWER_LEFT) {
-            moveTo(0,0);
-            corner = Corner.LOWER_RIGHT;
-        } else if (corner == Corner.UPPER_LEFT) {
-            moveTo(0, battleFieldHeight);
-            corner = Corner.LOWER_LEFT;
-        } else if (corner == Corner.LOWER_RIGHT) {
-            moveTo(battleFieldWidth, 0);
-            corner = Corner.UPPER_RIGHT;
-        } else if (corner == Corner.UPPER_RIGHT) {
-            moveTo(battleFieldWidth, battleFieldHeight);
-            corner = Corner.UPPER_LEFT;
+        if (side == Side.LEFT_SIDE) {
+            if (corner == Corner.LOWER_LEFT) {
+                moveTo(0,0);
+                corner = Corner.UPPER_LEFT;
+                setTurnGunLeft(180);
+                execute();
+            } else if (corner == Corner.UPPER_LEFT) {
+                moveTo(0, battleFieldHeight);
+                corner = Corner.LOWER_LEFT;
+                setTurnGunRight(180);
+                execute();
+            }
+        } else if (side == Side.RIGHT_SIDE) {
+            if (corner == Corner.LOWER_RIGHT) {
+                moveTo(battleFieldWidth, 0);
+                corner = Corner.UPPER_RIGHT;
+                setTurnGunRight(180);
+            } else if (corner == Corner.UPPER_RIGHT) {
+                moveTo(battleFieldWidth, battleFieldHeight);
+                corner = Corner.LOWER_RIGHT;
+                setTurnGunLeft(180);
+            }
         }
     }
 
@@ -101,20 +111,39 @@ public class CamperBot extends TeamRobot {
         double enemyY = (getY() + Math.cos(angle) * event.getDistance());
 
         if (!targets.getTarget(event.getName()).isFriendly()) {
-            if (calcDistance(enemyX, enemyY) < 500) {
+            if (event.getDistance() > 300) {
                 fire(0.5);
-            } else if (calcDistance(enemyX, enemyY) < 400) {
+            } else if (event.getDistance() > 200) {
                 fire(1);
-            } else if (calcDistance(enemyX, enemyY) < 300) {
+            } else if (event.getDistance() > 150) {
                 fire(1.5);
-            } else if (calcDistance(enemyX, enemyY) < 200) {
+            } else if (event.getDistance() > 100) {
                 fire(2);
-            } else if (calcDistance(enemyX, enemyY) < 150) {
-                fire(2.5);
-            } else if (calcDistance(enemyX, enemyY) < 100) {
+            } else if (event.getDistance() > 50) {
                 fire(3);
             }
         }
      }
 
+    @Override
+    public void onMessageReceived(MessageEvent event) {
+        super.onMessageReceived(event);
+        if (event.getMessage() instanceof SideMessage) {
+            if (!event.getSender().equals(this.getName())) {
+                Side side = ((SideMessage) event.getMessage()).getSide();
+                if (side == Side.LEFT_SIDE && this.side == Side.LEFT_SIDE) {
+                    this.side = Side.RIGHT_SIDE;
+                    this.corner = Corner.LOWER_RIGHT;
+                } else if (side == Side.RIGHT_SIDE && this.side == Side.RIGHT_SIDE) {
+                    this.side = Side.LEFT_SIDE;
+                    this.corner = Corner.LOWER_LEFT;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onStatus(StatusEvent e) {
+        super.onStatus(e);
+    }
 }
