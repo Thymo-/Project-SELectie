@@ -7,7 +7,7 @@ import robocode.*;
 import java.io.IOException;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
-    protected TargetMap targets;
+    TargetMap targets;
     private int scanMode;
 
     private static final int SCAN_SEARCH = 0;
@@ -18,11 +18,11 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         scanMode = SCAN_SEARCH;
     }
 
-    public int getScanMode() {
+    int getScanMode() {
         return scanMode;
     }
 
-    public void setScanMode(int scanMode) {
+    void setScanMode(int scanMode) {
         this.scanMode = scanMode;
 
         // Do radar step immediately to switch mode
@@ -129,7 +129,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @author Sieger van Breugel
      */
-    protected void evade(Target target) {
+    void evade(Target target) {
         double xPos = this.getX();
         double yPos = this.getY();
 
@@ -201,7 +201,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         scanAll();
     }
 
-    public void radarStep() {
+    void radarStep() {
         if (scanMode == SCAN_SEARCH) {
             if (getRadarTurnRemaining() < 25.0) {
                 setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
@@ -218,7 +218,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @author Thymo van Beers
      */
-    private void scanAll() {
+    void scanAll() {
         setScanMode(SCAN_SEARCH);
         setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
         setTurnGunRight(360);   // Turn gun one rotation for faster scanning
