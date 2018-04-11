@@ -15,15 +15,22 @@ import java.io.IOException;
 abstract public class TeamRobot extends robocode.TeamRobot {
     TargetMap targets;
     String currentTarget;
+
     private int scanMode;
+    private float lastLockTime;
 
     // Radar modes
     static final int SCAN_SEARCH = 0;
     static final int SCAN_LOCK = 1;
 
+    private static final int ACQUIRE_TIME = -1000;
+
     public TeamRobot() {
         targets = new TargetMap();
         scanMode = SCAN_SEARCH;
+
+        // Low number to give radar initial time to lock.
+        lastLockTime = ACQUIRE_TIME;
     }
 
     int getScanMode() {
@@ -45,6 +52,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
             out.println("Radar: Now in LOCK mode. Target: " + currentTarget);
 
         this.scanMode = scanMode;
+        this.lastLockTime = ACQUIRE_TIME;
 
         // Do radar step immediately to switch mode
         radarStep();
@@ -199,6 +207,10 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
         boolean friendly = false;
 
+        if (event.getName().equals(currentTarget) && scanMode == SCAN_LOCK) {
+            lastLockTime = 0;
+        }
+
         if (event.getName().contains("ehi1vsb1")) {
             friendly = true;
         }
@@ -261,6 +273,11 @@ abstract public class TeamRobot extends robocode.TeamRobot {
                 out.println("       Falling back to search mode.");
                 setScanMode(SCAN_SEARCH);
                 return;
+            }
+
+            if (lastLockTime > 10) {
+                out.println("Radar: Lost lock! Going back to search mode.");
+                setScanMode(SCAN_SEARCH);
             }
 
             double radarTurn =
