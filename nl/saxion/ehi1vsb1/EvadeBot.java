@@ -15,13 +15,12 @@ public class EvadeBot extends TeamRobot {
      */
     @Override
     public void run() {
-        setAdjustGunForRobotTurn(true);
-        setAdjustRadarForGunTurn(true);
+        super.run();
+        setCurrentTarget(currentTarget.getName());
+        setScanMode(SCAN_LOCK);
 
         while (true) {
             super.radarStep();
-            setTurnRadarRight(Double.POSITIVE_INFINITY);
-            waitFor(new RadarTurnCompleteCondition(this));
         }
     }
 
@@ -42,10 +41,9 @@ public class EvadeBot extends TeamRobot {
         }
 
         if (!currentTarget.isFriendly()) {
-            double followRadar = getHeading() + currentTarget.getBearing() - getRadarHeading();
             double followGun = getHeading() + currentTarget.getBearing() - getGunHeading();
-            turnRadarRight(followRadar);
             turnGunRight(followGun);
+
 
             if (currentTarget.getEnergy() < energy) {
                 super.evade(currentTarget);
@@ -58,6 +56,8 @@ public class EvadeBot extends TeamRobot {
         if (currentTarget.getEnergy() <= 0) {
             currentTarget = null;
         }
+
+        execute();
     }
 
     /**
@@ -65,7 +65,6 @@ public class EvadeBot extends TeamRobot {
      *
      * @param target - currentTarget
      * @return double power - Firepower
-     *
      * @author Sieger van Breugel
      */
     private double gunPowerForDistance(Target target) {
