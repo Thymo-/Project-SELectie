@@ -17,15 +17,18 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     String currentTarget;
 
     private int scanMode;
+    private boolean active;
 
     // Radar modes
     static final int SCAN_SEARCH = 0;
     static final int SCAN_LOCK = 1;
+    static final int SCAN_NOOP = 2;
 
 
     public TeamRobot() {
         targets = new TargetMap();
         scanMode = SCAN_SEARCH;
+        active = true;
     }
 
     int getScanMode() {
@@ -41,13 +44,19 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * @author Thymo van Beers
      */
     void setScanMode(int scanMode) {
-        if (scanMode == SCAN_SEARCH) {
-            out.println("Radar: Now in SEARCH mode");
-        } else {
-            if (scanMode == SCAN_LOCK)
+        switch (scanMode) {
+            case SCAN_SEARCH:
+                out.println("Radar: Now in SEARCH mode.");
+                break;
+            case SCAN_LOCK:
                 out.println("Radar: Now in LOCK mode. Target: " + currentTarget);
+                break;
+            case SCAN_NOOP:
+                out.println("Radar: Now in NOOP mode.");
+                break;
         }
 
+        active = true;
         this.scanMode = scanMode;
     }
 
@@ -196,7 +205,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         double enemyY = (getY() + Math.cos(angle) * event.getDistance());
 
         boolean friendly = false;
-        
+
         if (event.getName().contains("ehi1vsb1")) {
             friendly = true;
         }
@@ -242,6 +251,9 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *      - Set the radar to turn infinitely
      * In lock mode:
      *      - Arc around the target and narrow until target locked
+     * In no-op mode:
+     *      - Stops the radar if it's active
+     *      - Relinquishes radar control to child
      *
      * @author Thymo van Beers
      */
@@ -265,8 +277,15 @@ abstract public class TeamRobot extends robocode.TeamRobot {
                     // Subtract current heading to get turn cmd
                     - getRadarHeading();
 
-            setTurnRadarRight(1.9 * Utils.normalRelativeAngleDegrees(radarTurn));
+            double turnCmd = 1.9 * Utils.normalRelativeAngleDegrees(radarTurn);
+            setTurnRadarRight(turnCmd);
             execute();
+        } else if (scanMode == SCAN_NOOP) {
+            if (active) {
+                active = false;
+                setTurnRadarRight(0);
+                execute();
+            }
         }
     }
 
