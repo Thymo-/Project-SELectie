@@ -126,7 +126,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
     /**
      * Move to a specified coordinate
-     * This method blocks
      *
      * @param xcmd X position
      * @param ycmd Y position
