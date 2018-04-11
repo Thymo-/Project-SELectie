@@ -60,8 +60,15 @@ public class EvadeBot extends TeamRobot {
         }
     }
 
+    /**
+     * Method that returns the required firepower based on dinstance to the target
+     *
+     * @param target - currentTarget
+     * @return double power - Firepower
+     *
+     * @author Sieger van Breugel
+     */
     private double gunPowerForDistance(Target target) {
-        double power = target.getDistance() * 0.5;
-        return power;
+        return target.getDistance() / 0.5;
     }
 }
