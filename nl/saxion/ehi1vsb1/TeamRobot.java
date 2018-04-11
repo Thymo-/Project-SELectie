@@ -196,7 +196,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         double enemyY = (getY() + Math.cos(angle) * event.getDistance());
 
         boolean friendly = false;
-        
+
         if (event.getName().contains("ehi1vsb1")) {
             friendly = true;
         }
@@ -265,7 +265,8 @@ abstract public class TeamRobot extends robocode.TeamRobot {
                     // Subtract current heading to get turn cmd
                     - getRadarHeading();
 
-            setTurnRadarRight(1.9 * Utils.normalRelativeAngleDegrees(radarTurn));
+            double turnCmd = 1.9 * Utils.normalRelativeAngleDegrees(radarTurn);
+            setTurnRadarRight(turnCmd);
             execute();
         }
     }
