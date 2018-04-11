@@ -1,8 +1,11 @@
 package nl.saxion.ehi1vsb1;
 
+import nl.saxion.ehi1vsb1.messages.SideMessage;
 import robocode.HitRobotEvent;
 import robocode.MoveCompleteCondition;
 import robocode.ScannedRobotEvent;
+
+import java.io.IOException;
 
 /**
  * Implementation of the CamperBot
@@ -11,16 +14,27 @@ import robocode.ScannedRobotEvent;
  */
 public class CamperBot extends TeamRobot {
 
+    public enum Side {
+        LEFT_SIDE, RIGHT_SIDE
+    }
     private enum Corner {
         LOWER_LEFT, UPPER_LEFT, LOWER_RIGHT, UPPER_RIGHT
     }
 
+    private Side side;
     private Corner corner;
 
     @Override
     public void run() {
         setTurnLeft(getHeading() % 90);
         setTurnGunLeft(90);
+        
+        side = Side.LEFT_SIDE;
+        try {
+            sendMessage("side_of_wall", new SideMessage(side));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         execute();
         waitFor(new MoveCompleteCondition(this));
