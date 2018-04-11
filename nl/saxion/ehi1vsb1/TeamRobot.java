@@ -201,7 +201,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     public void radarStep() {
         if (scanMode == SCAN_SEARCH) {
             if (getRadarTurnRemaining() < 25.0) {
-                setTurnRadarRight(Double.POSITIVE_INFINITY);
+                setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
                 execute();
             }
         } else if (scanMode == SCAN_LOCK) {
@@ -211,11 +211,12 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     }
 
     /**
-     * Enable scanning forever
+     * Switch radar to scan mode and do a single accelerated scan
      *
      * @author Thymo van Beers
      */
     private void scanAll() {
+        setScanMode(SCAN_SEARCH);
         setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
         setTurnGunRight(360);   // Turn gun one rotation for faster scanning
         execute();
