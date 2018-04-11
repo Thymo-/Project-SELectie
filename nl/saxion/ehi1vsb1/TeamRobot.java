@@ -3,6 +3,7 @@ package nl.saxion.ehi1vsb1;
 import nl.saxion.ehi1vsb1.data.*;
 import nl.saxion.ehi1vsb1.messages.*;
 import robocode.*;
+import robocode.util.Utils;
 
 import java.io.IOException;
 
@@ -13,6 +14,7 @@ import java.io.IOException;
  */
 abstract public class TeamRobot extends robocode.TeamRobot {
     TargetMap targets;
+    String currentTarget;
     private int scanMode;
 
     // Radar modes
@@ -37,9 +39,20 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * @author Thymo van Beers
      */
     void setScanMode(int scanMode) {
+        if (scanMode == SCAN_SEARCH)
+            out.println("Radar: Now in SEARCH mode");
+        else if (scanMode == SCAN_LOCK)
+            out.println("Radar: Now in LOCK mode. Target: " + currentTarget);
+
         this.scanMode = scanMode;
 
         // Do radar step immediately to switch mode
+        radarStep();
+    }
+
+    void setCurrentTarget(String targetName) {
+        this.currentTarget = targetName;
+
         radarStep();
     }
 
@@ -241,8 +254,23 @@ abstract public class TeamRobot extends robocode.TeamRobot {
                 execute();
             }
         } else if (scanMode == SCAN_LOCK) {
-            out.println("Radar has been switched to unimplemented mode!");
-            scanMode = SCAN_SEARCH;
+            Target radarTarget = targets.getTarget(currentTarget);
+
+            if (radarTarget == null) { // No target, fall back to search mode.
+                out.println("Radar: Could not find target to lock!");
+                out.println("       Falling back to search mode.");
+                setScanMode(SCAN_SEARCH);
+                return;
+            }
+
+            double radarTurn =
+                    // Absolute bearing to target
+                    getHeading() + radarTarget.getBearing()
+                    // Subtract current heading to get turn cmd
+                    - getRadarHeading();
+
+            setTurnRadarRight(1.9 * Utils.normalRelativeAngleDegrees(radarTurn));
+            execute();
         }
     }
 
