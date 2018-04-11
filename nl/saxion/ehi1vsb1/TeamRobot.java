@@ -24,6 +24,9 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
     public void setScanMode(int scanMode) {
         this.scanMode = scanMode;
+
+        // Do radar step immediately to switch mode
+        radarStep();
     }
 
     /**
