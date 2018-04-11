@@ -108,8 +108,6 @@ public class TargetMap {
         } else {
             targetList.add(target);
         }
-
-        printTargets();
     }
 
     /**

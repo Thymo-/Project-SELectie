@@ -1,5 +1,6 @@
 package nl.saxion.ehi1vsb1;
 
+import robocode.HitRobotEvent;
 import robocode.MoveCompleteCondition;
 import robocode.ScannedRobotEvent;
 
@@ -85,10 +86,21 @@ public class CamperBot extends TeamRobot {
         double enemyX = (getX() + Math.sin(angle) * event.getDistance());
         double enemyY = (getY() + Math.cos(angle) * event.getDistance());
 
-        if (calcDistance(enemyX, enemyY) < 350) {
-            fire(2);
-        } else if (calcDistance(enemyX, enemyY) < 100) {
-            fire(10);
+        if (!targets.getTarget(event.getName()).isFriendly()) {
+            if (calcDistance(enemyX, enemyY) < 500) {
+                fire(0.5);
+            } else if (calcDistance(enemyX, enemyY) < 400) {
+                fire(1);
+            } else if (calcDistance(enemyX, enemyY) < 300) {
+                fire(1.5);
+            } else if (calcDistance(enemyX, enemyY) < 200) {
+                fire(2);
+            } else if (calcDistance(enemyX, enemyY) < 150) {
+                fire(2.5);
+            } else if (calcDistance(enemyX, enemyY) < 100) {
+                fire(3);
+            }
         }
      }
+     
 }
