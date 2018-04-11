@@ -44,6 +44,7 @@ public class Target implements Comparable<Target>, Serializable {
      * Given a target compare it to the current target
      *
      * @param o The target to be compared
+     *
      * @return int: The value 0 if o == Target; a value less
      * than 0 if o < Target; and a value greater than 0 if o > Target
      *
@@ -58,7 +59,9 @@ public class Target implements Comparable<Target>, Serializable {
      * Check if target is already in map
      *
      * @param obj Target to check
+     *
      * @return true - target equals; false - target does not equal
+     *
      * @author Thymo van Beers
      */
     @Override
