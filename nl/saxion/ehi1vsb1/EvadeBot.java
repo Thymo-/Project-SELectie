@@ -15,12 +15,12 @@ public class EvadeBot extends TeamRobot {
      */
     @Override
     public void run() {
-        setAdjustGunForRobotTurn(true);
-        setAdjustRadarForGunTurn(true);
+        super.run();
+        setCurrentTarget(currentTarget.getName());
+        setScanMode(SCAN_LOCK);
 
         while (true) {
-            setTurnRadarRight(Double.POSITIVE_INFINITY);
-            waitFor(new RadarTurnCompleteCondition(this));
+            super.radarStep();
         }
     }
 
@@ -41,21 +41,33 @@ public class EvadeBot extends TeamRobot {
         }
 
         if (!currentTarget.isFriendly()) {
-            double followRadar = getHeading() + currentTarget.getBearing() - getRadarHeading();
             double followGun = getHeading() + currentTarget.getBearing() - getGunHeading();
-            turnRadarRight(followRadar);
             turnGunRight(followGun);
+
 
             if (currentTarget.getEnergy() < energy) {
                 super.evade(currentTarget);
                 energy = 0;
             } else {
-                fire(3);
+                fire(gunPowerForDistance(currentTarget));
             }
         }
 
         if (currentTarget.getEnergy() <= 0) {
             currentTarget = null;
         }
+
+        execute();
+    }
+
+    /**
+     * Method that returns the required firepower based on dinstance to the target
+     *
+     * @param target - currentTarget
+     * @return double power - Firepower
+     * @author Sieger van Breugel
+     */
+    private double gunPowerForDistance(Target target) {
+        return target.getDistance() / 0.5;
     }
 }
