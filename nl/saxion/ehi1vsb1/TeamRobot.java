@@ -16,8 +16,8 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     private int scanMode;
 
     // Radar modes
-    private static final int SCAN_SEARCH = 0;
-    private static final int SCAN_LOCK = 1;
+    static final int SCAN_SEARCH = 0;
+    static final int SCAN_LOCK = 1;
 
     public TeamRobot() {
         targets = new TargetMap();
