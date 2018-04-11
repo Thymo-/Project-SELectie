@@ -102,5 +102,5 @@ public class CamperBot extends TeamRobot {
             }
         }
      }
-     
+
 }
