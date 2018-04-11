@@ -31,23 +31,24 @@ public class TargetMap {
 
         System.out.println(targetList.size());
         for (int i = 0; i < targetList.size(); i++) {
-            if (i == 0) {
-                closestTarget = targetList.get(i);
-
+            if (closestTarget == null) {
+                if (!targetList.get(i).isFriendly()) {
+                    closestTarget = targetList.get(i);
+                }
             } else {
                 double distanceToClosestTargetXPos = distanceToTarget(xPos, closestTarget.getxPos());
                 double distanceToClosestTargetYPos = distanceToTarget(yPos, closestTarget.getyPos());
                 double distanceToTargetXPos = distanceToTarget(xPos, targetList.get(i).getxPos());
                 double distanceToTargetYPos = distanceToTarget(yPos, targetList.get(i).getyPos());
 
-                if (distanceToTargetXPos < distanceToClosestTargetXPos && distanceToTargetYPos < distanceToClosestTargetYPos) {
+                if (distanceToTargetXPos < distanceToClosestTargetXPos && distanceToTargetYPos < distanceToClosestTargetYPos && !targetList.get(i).isFriendly()) {
                     closestTarget = targetList.get(i);
                     System.out.println(closestTarget.getName());
-                } else if (distanceToTargetXPos < distanceToClosestTargetXPos) {
+                } else if (distanceToTargetXPos < distanceToClosestTargetXPos && !targetList.get(i).isFriendly()) {
                     if (distanceToTargetXPos + distanceToTargetYPos < distanceToClosestTargetXPos + distanceToClosestTargetYPos) {
                         closestTarget = targetList.get(i);
                     }
-                } else if (distanceToTargetYPos < distanceToClosestTargetYPos) {
+                } else if (distanceToTargetYPos < distanceToClosestTargetYPos && !targetList.get(i).isFriendly()) {
                     if (distanceToTargetXPos + distanceToTargetYPos < distanceToClosestTargetXPos + distanceToClosestTargetYPos) {
                         closestTarget = targetList.get(i);
                     }

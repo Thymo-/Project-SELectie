@@ -52,14 +52,13 @@ public class CamperBot extends TeamRobot {
             e.printStackTrace();
         }
 
-        setTurnLeft(getHeading() % 90);
-        setTurnGunLeft(90);
+        super.run();
 
-        execute();
-        waitFor(new MoveCompleteCondition(this));
+        setCurrentTarget(targets.getClosest(x, y).getName());
+        setScanMode(SCAN_LOCK);
 
         while (true) {
-            scan();
+            super.radarStep();
             driveAlongsideWall();
         }
     }
@@ -78,23 +77,17 @@ public class CamperBot extends TeamRobot {
             if (corner == Corner.LOWER_LEFT) {
                 moveTo(0,0);
                 corner = Corner.UPPER_LEFT;
-                setTurnGunLeft(180);
-                execute();
             } else if (corner == Corner.UPPER_LEFT) {
                 moveTo(0, battleFieldHeight);
                 corner = Corner.LOWER_LEFT;
-                setTurnGunRight(180);
-                execute();
             }
         } else if (side == Side.RIGHT_SIDE) {
             if (corner == Corner.LOWER_RIGHT) {
                 moveTo(battleFieldWidth, 0);
                 corner = Corner.UPPER_RIGHT;
-                setTurnGunRight(180);
             } else if (corner == Corner.UPPER_RIGHT) {
                 moveTo(battleFieldWidth, battleFieldHeight);
                 corner = Corner.LOWER_RIGHT;
-                setTurnGunLeft(180);
             }
         }
     }
@@ -142,8 +135,4 @@ public class CamperBot extends TeamRobot {
         }
     }
 
-    @Override
-    public void onStatus(StatusEvent e) {
-        super.onStatus(e);
-    }
 }
