@@ -95,10 +95,7 @@ public class CamperBot extends TeamRobot {
                 corner = Corner.UPPER_LEFT;
             } else if (corner == Corner.UPPER_LEFT) {
                 moveTo(0, battleFieldHeight);
-                corner = Corner.UPPER_RIGHT;
-            } else if (corner == Corner.UPPER_RIGHT) {
-                moveTo(battleFieldWidth, battleFieldHeight);
-                corner = Corner.UPPER_LEFT;
+                corner = Corner.LOWER_LEFT;
             }
         } else if (side == Side.RIGHT_SIDE) {
             if (corner == Corner.LOWER_RIGHT) {
@@ -152,6 +149,21 @@ public class CamperBot extends TeamRobot {
                 }
             }
         }
+    }
+
+    @Override
+    double steerTo(double heading) {
+        double steerAngle = heading - getHeading();
+
+        if (steerAngle < -180) {
+            steerAngle = 360 - -steerAngle;
+        }
+
+        out.println("Steer command: " + steerAngle);
+
+        setTurnRight(steerAngle);
+        waitFor(new TurnCompleteCondition(this));
+        return steerAngle;
     }
 
 }
