@@ -3,6 +3,7 @@ package nl.saxion.ehi1vsb1;
 import nl.saxion.ehi1vsb1.data.Target;
 import robocode.RadarTurnCompleteCondition;
 import robocode.ScannedRobotEvent;
+import robocode.util.Utils;
 
 public class EvadeBot extends TeamRobot {
     private Target currentTarget;
@@ -15,12 +16,13 @@ public class EvadeBot extends TeamRobot {
      */
     @Override
     public void run() {
-        super.run();
-        setCurrentTarget(currentTarget.getName());
-        setScanMode(SCAN_LOCK);
+        setAdjustGunForRobotTurn(true);
+        setAdjustRadarForGunTurn(true);
+
 
         while (true) {
-            super.radarStep();
+            setTurnRadarRight(Double.POSITIVE_INFINITY);
+            waitFor(new RadarTurnCompleteCondition(this));
         }
     }
 
@@ -38,12 +40,16 @@ public class EvadeBot extends TeamRobot {
 
         if (energy == 0) {
             energy = currentTarget.getEnergy();
+            scan();
         }
 
         if (!currentTarget.isFriendly()) {
+            double followRadar = getHeading() + currentTarget.getBearing() - getRadarHeading();
             double followGun = getHeading() + currentTarget.getBearing() - getGunHeading();
-            turnGunRight(followGun);
+            double bulletTravelTime = currentTarget.getDistance() * (20 - (3 * gunPowerForDistance(currentTarget)));
 
+            turnRadarRight(followRadar);
+            setTurnGunRight(followGun);
 
             if (currentTarget.getEnergy() < energy) {
                 super.evade(currentTarget);
