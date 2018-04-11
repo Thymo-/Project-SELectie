@@ -1,7 +1,11 @@
 package nl.saxion.ehi1vsb1;
 
+import nl.saxion.ehi1vsb1.messages.SideMessage;
+import robocode.HitRobotEvent;
 import robocode.MoveCompleteCondition;
 import robocode.ScannedRobotEvent;
+
+import java.io.IOException;
 
 /**
  * Implementation of the CamperBot
@@ -10,16 +14,27 @@ import robocode.ScannedRobotEvent;
  */
 public class CamperBot extends TeamRobot {
 
+    public enum Side {
+        LEFT_SIDE, RIGHT_SIDE
+    }
     private enum Corner {
         LOWER_LEFT, UPPER_LEFT, LOWER_RIGHT, UPPER_RIGHT
     }
 
+    private Side side;
     private Corner corner;
 
     @Override
     public void run() {
         setTurnLeft(getHeading() % 90);
         setTurnGunLeft(90);
+        
+        side = Side.LEFT_SIDE;
+        try {
+            sendMessage("side_of_wall", new SideMessage(side));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         execute();
         waitFor(new MoveCompleteCondition(this));
@@ -85,10 +100,21 @@ public class CamperBot extends TeamRobot {
         double enemyX = (getX() + Math.sin(angle) * event.getDistance());
         double enemyY = (getY() + Math.cos(angle) * event.getDistance());
 
-        if (calcDistance(enemyX, enemyY) < 350) {
-            fire(2);
-        } else if (calcDistance(enemyX, enemyY) < 100) {
-            fire(10);
+        if (!targets.getTarget(event.getName()).isFriendly()) {
+            if (calcDistance(enemyX, enemyY) < 500) {
+                fire(0.5);
+            } else if (calcDistance(enemyX, enemyY) < 400) {
+                fire(1);
+            } else if (calcDistance(enemyX, enemyY) < 300) {
+                fire(1.5);
+            } else if (calcDistance(enemyX, enemyY) < 200) {
+                fire(2);
+            } else if (calcDistance(enemyX, enemyY) < 150) {
+                fire(2.5);
+            } else if (calcDistance(enemyX, enemyY) < 100) {
+                fire(3);
+            }
         }
      }
+
 }
