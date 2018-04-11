@@ -17,20 +17,15 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     String currentTarget;
 
     private int scanMode;
-    private float lastLockTime;
 
     // Radar modes
     static final int SCAN_SEARCH = 0;
     static final int SCAN_LOCK = 1;
 
-    private static final int ACQUIRE_TIME = -1000;
 
     public TeamRobot() {
         targets = new TargetMap();
         scanMode = SCAN_SEARCH;
-
-        // Low number to give radar initial time to lock.
-        lastLockTime = ACQUIRE_TIME;
     }
 
     int getScanMode() {
@@ -46,22 +41,18 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * @author Thymo van Beers
      */
     void setScanMode(int scanMode) {
-        if (scanMode == SCAN_SEARCH)
+        if (scanMode == SCAN_SEARCH) {
             out.println("Radar: Now in SEARCH mode");
-        else if (scanMode == SCAN_LOCK)
-            out.println("Radar: Now in LOCK mode. Target: " + currentTarget);
+        } else {
+            if (scanMode == SCAN_LOCK)
+                out.println("Radar: Now in LOCK mode. Target: " + currentTarget);
+        }
 
         this.scanMode = scanMode;
-        this.lastLockTime = ACQUIRE_TIME;
-
-        // Do radar step immediately to switch mode
-        radarStep();
     }
 
     void setCurrentTarget(String targetName) {
         this.currentTarget = targetName;
-
-        radarStep();
     }
 
     /**
@@ -154,7 +145,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
         steerTo(calcHeading(xcmd, ycmd));
         setAhead(calcDistance(xcmd, ycmd));
-        waitFor(new MoveCompleteCondition(this));
     }
 
     /**
@@ -207,10 +197,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
         boolean friendly = false;
 
-        if (event.getName().equals(currentTarget) && scanMode == SCAN_LOCK) {
-            lastLockTime = 0;
-        }
-
         if (event.getName().contains("ehi1vsb1")) {
             friendly = true;
         }
@@ -261,10 +247,8 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      */
     void radarStep() {
         if (scanMode == SCAN_SEARCH) {
-            if (getRadarTurnRemaining() < 25.0) {
                 setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
                 execute();
-            }
         } else if (scanMode == SCAN_LOCK) {
             Target radarTarget = targets.getTarget(currentTarget);
 
@@ -275,18 +259,14 @@ abstract public class TeamRobot extends robocode.TeamRobot {
                 return;
             }
 
-            if (lastLockTime > 10) {
-                out.println("Radar: Lost lock! Going back to search mode.");
-                setScanMode(SCAN_SEARCH);
-            }
-
             double radarTurn =
                     // Absolute bearing to target
                     getHeading() + radarTarget.getBearing()
                     // Subtract current heading to get turn cmd
                     - getRadarHeading();
 
-            setTurnRadarRight(1.9 * Utils.normalRelativeAngleDegrees(radarTurn));
+            double turnCmd = 1.9 * Utils.normalRelativeAngleDegrees(radarTurn);
+            setTurnRadarRight(turnCmd);
             execute();
         }
     }
