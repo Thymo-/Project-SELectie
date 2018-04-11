@@ -58,4 +58,9 @@ public class EvadeBot extends TeamRobot {
             currentTarget = null;
         }
     }
+
+    private double gunPowerForDistance(Target target) {
+        double power = target.getDistance();
+        return power;
+    }
 }
