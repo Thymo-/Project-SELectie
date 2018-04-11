@@ -1,5 +1,6 @@
 package nl.saxion.ehi1vsb1;
 
+import nl.saxion.ehi1vsb1.data.Target;
 import robocode.ScannedRobotEvent;
 
 /**
@@ -8,28 +9,24 @@ import robocode.ScannedRobotEvent;
  * @author Thymo van Beers
  */
 public class AttackBot extends TeamRobot {
-    private boolean firstBotDetected;
-
     @Override
     public void run() {
         super.run();
-
-        while (!firstBotDetected)
-            doNothing();
+        setCurrentTarget(targets.getClosest(getX(), getY()).getName());
+        setScanMode(SCAN_LOCK);
 
         // Logic loop
         while (true) {
             radarStep();
-
-            execute();
         }
     }
 
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
-
-        if (!firstBotDetected)
-            firstBotDetected = true;
+        Target target = targets.getTarget(currentTarget);
+        setTurnGunRight(getHeading() + target.getBearing() - getGunHeading());
+        fire(target.getDistance() / 0.5);
+        moveTo(target.getxPos(), target.getyPos());
     }
 }
