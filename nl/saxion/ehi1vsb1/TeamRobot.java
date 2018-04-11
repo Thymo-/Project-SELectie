@@ -3,27 +3,65 @@ package nl.saxion.ehi1vsb1;
 import nl.saxion.ehi1vsb1.data.*;
 import nl.saxion.ehi1vsb1.messages.*;
 import robocode.*;
+import robocode.util.Utils;
 
 import java.io.IOException;
 
+/**
+ * Abstract class that implements generic stuff for all bots
+ *
+ * @author Thymo van Beers
+ */
 abstract public class TeamRobot extends robocode.TeamRobot {
-    protected TargetMap targets;
-    private int scanMode;
+    TargetMap targets;
+    String currentTarget;
 
-    private static final int SCAN_SEARCH = 0;
-    private static final int SCAN_LOCK = 1;
+    private int scanMode;
+    private float lastLockTime;
+
+    // Radar modes
+    static final int SCAN_SEARCH = 0;
+    static final int SCAN_LOCK = 1;
+
+    private static final int ACQUIRE_TIME = -1000;
 
     public TeamRobot() {
         targets = new TargetMap();
         scanMode = SCAN_SEARCH;
+
+        // Low number to give radar initial time to lock.
+        lastLockTime = ACQUIRE_TIME;
     }
 
-    public int getScanMode() {
+    int getScanMode() {
         return scanMode;
     }
 
-    public void setScanMode(int scanMode) {
+    /**
+     * Set the new mode the radar needs to operate in.
+     * Calls radarStep to make mode switching happen ASAP.
+     *
+     * @param scanMode SCAN_SEARCH or SCAN_LOCK
+     *
+     * @author Thymo van Beers
+     */
+    void setScanMode(int scanMode) {
+        if (scanMode == SCAN_SEARCH)
+            out.println("Radar: Now in SEARCH mode");
+        else if (scanMode == SCAN_LOCK)
+            out.println("Radar: Now in LOCK mode. Target: " + currentTarget);
+
         this.scanMode = scanMode;
+        this.lastLockTime = ACQUIRE_TIME;
+
+        // Do radar step immediately to switch mode
+        radarStep();
+    }
+
+    void setCurrentTarget(String targetName) {
+        this.currentTarget = targetName;
+
+        radarStep();
     }
 
     /**
@@ -126,7 +164,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @author Sieger van Breugel
      */
-    protected void evade(Target target) {
+    void evade(Target target) {
         double xPos = this.getX();
         double yPos = this.getY();
 
@@ -169,6 +207,10 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
         boolean friendly = false;
 
+        if (event.getName().equals(currentTarget) && scanMode == SCAN_LOCK) {
+            lastLockTime = 0;
+        }
+
         if (event.getName().contains("ehi1vsb1")) {
             friendly = true;
         }
@@ -192,30 +234,71 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         }
     }
 
+    /**
+     * Run initialization for all robots
+     * Initializes the radar and does initial sweep
+     *
+     * @author Thymo van Beers
+     */
     public void run() {
         setAdjustGunForRobotTurn(true);
         setAdjustRadarForGunTurn(true);
         scanAll();
     }
 
-    public void radarStep() {
+    /**
+     * Radar controller.
+     * This method should be called each round. Especially when in lock mode
+     * in order not to lose the lock.
+     *
+     * In scan mode:
+     *      - Check if the radar is about to stop turning (it shouldn't, but who knows)
+     *      - Set the radar to turn infinitely
+     * In lock mode:
+     *      - Arc around the target and narrow until target locked
+     *
+     * @author Thymo van Beers
+     */
+    void radarStep() {
         if (scanMode == SCAN_SEARCH) {
             if (getRadarTurnRemaining() < 25.0) {
-                setTurnRadarRight(Double.POSITIVE_INFINITY);
+                setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
                 execute();
             }
         } else if (scanMode == SCAN_LOCK) {
-            out.println("Radar has been switched to unimplemented mode!");
-            scanMode = SCAN_SEARCH;
+            Target radarTarget = targets.getTarget(currentTarget);
+
+            if (radarTarget == null) { // No target, fall back to search mode.
+                out.println("Radar: Could not find target to lock!");
+                out.println("       Falling back to search mode.");
+                setScanMode(SCAN_SEARCH);
+                return;
+            }
+
+            if (lastLockTime > 10) {
+                out.println("Radar: Lost lock! Going back to search mode.");
+                setScanMode(SCAN_SEARCH);
+            }
+
+            double radarTurn =
+                    // Absolute bearing to target
+                    getHeading() + radarTarget.getBearing()
+                    // Subtract current heading to get turn cmd
+                    - getRadarHeading();
+
+            setTurnRadarRight(1.9 * Utils.normalRelativeAngleDegrees(radarTurn));
+            execute();
         }
     }
 
     /**
-     * Enable scanning forever
+     * Switch radar to scan mode and do a single accelerated scan.
+     * This method blocks until the scan pass is complete.
      *
      * @author Thymo van Beers
      */
-    private void scanAll() {
+    void scanAll() {
+        setScanMode(SCAN_SEARCH); // Reset radar to scan mode to be sure
         setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
         setTurnGunRight(360);   // Turn gun one rotation for faster scanning
         execute();
