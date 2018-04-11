@@ -209,6 +209,12 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         }
     }
 
+    /**
+     * Run initialization for all robots
+     * Initializes the radar and does initial sweep
+     *
+     * @author Thymo van Beers
+     */
     public void run() {
         setAdjustGunForRobotTurn(true);
         setAdjustRadarForGunTurn(true);
