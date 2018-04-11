@@ -91,27 +91,10 @@ public class TargetMap {
      * @author Tim Hofman
      */
     public void addTarget(Target target) {
-        Target targetToRemove = null;
-
         if (exists(target)) {
-            for (Target targetToCheck : targetList) {
-                if (target.getName().equals(targetToCheck.getName())) {
-                    targetToRemove = targetToCheck;
-                    break;
-                }
-            }
-
-            for (int i = 0; i < targetList.size(); i++) {
-                if (target.getTurn() > targetList.get(i).getTurn()) {
-                    targetList.add(target);
-                    if (targetToRemove != null) {
-                        targetList.remove(targetToRemove);
-                    }
-                }
-            }
-        } else {
-            targetList.add(target);
+            removeTarget(target.getName());
         }
+        targetList.add(target);
     }
 
     /**
@@ -119,9 +102,9 @@ public class TargetMap {
      *
      * @author Tim Hofman
      */
-    private void printTargets() {
+    public void printTargets() {
+        System.out.println("\n--------\nTargets");
         if (targetList.size() > 0) {
-            System.out.println("\n--------\nTargets");
             for (Target target : targetList) {
                 System.out.println("  Target: "   + target.getName()
                                     + "\n    X Position: " + target.getxPos()
@@ -164,5 +147,17 @@ public class TargetMap {
             }
         }
         return null;
+    }
+
+    public void removeTarget(String targetName) {
+        for (int i = 0; i < targetList.size(); i++) {
+            Target target = targetList.get(i);
+            if (target.getName().equals(targetName))
+                targetList.remove(i);
+        }
+    }
+
+    public int size() {
+        return targetList.size();
     }
 }

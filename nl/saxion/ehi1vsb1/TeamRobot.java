@@ -228,6 +228,16 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         }
     }
 
+    @Override
+    public void onRobotDeath(RobotDeathEvent event) {
+        for (int i = 0; i < targets.size(); i++) {
+            targets.removeTarget(event.getName());
+        }
+        setScanMode(SCAN_SEARCH);
+        currentTarget = targets.getClosest(getX(), getY()).getName();
+        targets.printTargets();
+    }
+
     /**
      * Run initialization for all robots
      * Initializes the radar and does initial sweep
