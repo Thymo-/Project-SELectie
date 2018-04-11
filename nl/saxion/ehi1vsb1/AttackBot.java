@@ -9,24 +9,38 @@ import robocode.ScannedRobotEvent;
  * @author Thymo van Beers
  */
 public class AttackBot extends TeamRobot {
+    private long lastModeSwitch;
+
+    public AttackBot() {
+        super();
+        this.lastModeSwitch = 0;
+    }
+
     @Override
     public void run() {
         super.run();
         setCurrentTarget(targets.getClosest(getX(), getY()).getName());
         setScanMode(SCAN_LOCK);
 
-        // Logic loop
         while (true) {
             radarStep();
+
+            long time = getTime();
+            if ((getScanMode() == SCAN_LOCK && time - lastModeSwitch > 100) ||
+                    (getScanMode() == SCAN_SEARCH && time - lastModeSwitch > 15)) {
+                lastModeSwitch = time;
+                if (getScanMode() == SCAN_SEARCH) {
+                    setCurrentTarget(targets.getClosest(getX(), getY()).getName());
+                    setScanMode(SCAN_LOCK);
+                } else {
+                    setScanMode(SCAN_SEARCH);
+                }
+            }
         }
     }
 
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
-        Target target = targets.getTarget(currentTarget);
-        setTurnGunRight(getHeading() + target.getBearing() - getGunHeading());
-        fire(target.getDistance() / 0.5);
-        moveTo(target.getxPos(), target.getyPos());
     }
 }
