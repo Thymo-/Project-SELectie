@@ -19,6 +19,7 @@ public class EvadeBot extends TeamRobot {
         setAdjustRadarForGunTurn(true);
 
         while (true) {
+            super.radarStep();
             setTurnRadarRight(Double.POSITIVE_INFINITY);
             waitFor(new RadarTurnCompleteCondition(this));
         }
@@ -50,7 +51,7 @@ public class EvadeBot extends TeamRobot {
                 super.evade(currentTarget);
                 energy = 0;
             } else {
-                fire(3);
+                fire(gunPowerForDistance(currentTarget));
             }
         }
 
@@ -60,7 +61,7 @@ public class EvadeBot extends TeamRobot {
     }
 
     private double gunPowerForDistance(Target target) {
-        double power = target.getDistance();
+        double power = target.getDistance() * 0.5;
         return power;
     }
 }
