@@ -7,7 +7,7 @@ import robocode.*;
 import java.io.IOException;
 
 abstract public class TeamRobot extends robocode.TeamRobot {
-    protected TargetMap targets;
+    TargetMap targets;
     private int scanMode;
 
     private static final int SCAN_SEARCH = 0;
@@ -18,12 +18,15 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         scanMode = SCAN_SEARCH;
     }
 
-    public int getScanMode() {
+    int getScanMode() {
         return scanMode;
     }
 
-    public void setScanMode(int scanMode) {
+    void setScanMode(int scanMode) {
         this.scanMode = scanMode;
+
+        // Do radar step immediately to switch mode
+        radarStep();
     }
 
     /**
@@ -126,7 +129,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * @author Sieger van Breugel
      */
-    protected void evade(Target target) {
+    void evade(Target target) {
         double xPos = this.getX();
         double yPos = this.getY();
 
@@ -198,10 +201,10 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         scanAll();
     }
 
-    public void radarStep() {
+    void radarStep() {
         if (scanMode == SCAN_SEARCH) {
             if (getRadarTurnRemaining() < 25.0) {
-                setTurnRadarRight(Double.POSITIVE_INFINITY);
+                setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
                 execute();
             }
         } else if (scanMode == SCAN_LOCK) {
@@ -211,11 +214,12 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     }
 
     /**
-     * Enable scanning forever
+     * Switch radar to scan mode and do a single accelerated scan
      *
      * @author Thymo van Beers
      */
-    private void scanAll() {
+    void scanAll() {
+        setScanMode(SCAN_SEARCH);
         setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
         setTurnGunRight(360);   // Turn gun one rotation for faster scanning
         execute();
