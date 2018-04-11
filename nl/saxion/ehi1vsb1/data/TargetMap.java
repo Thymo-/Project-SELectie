@@ -32,8 +32,11 @@ public class TargetMap {
         System.out.println(targetList.size());
         for (int i = 0; i < targetList.size(); i++) {
             if (closestTarget == null) {
-                if (!targetList.get(i).isFriendly()) {
-                    closestTarget = targetList.get(i);
+                for (int j = 0; j < targetList.size(); j++) {
+                    if (!targetList.get(j).isFriendly()) {
+                        closestTarget = targetList.get(j);
+                        break;
+                    }
                 }
             } else {
                 double distanceToClosestTargetXPos = distanceToTarget(xPos, closestTarget.getxPos());

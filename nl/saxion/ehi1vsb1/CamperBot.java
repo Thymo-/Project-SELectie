@@ -22,8 +22,6 @@ public class CamperBot extends TeamRobot {
 
     private Side side;
     private Corner corner;
-    private int lastTurn = 0;
-    private boolean move = false;
 
     @Override
     public void run() {
@@ -56,29 +54,10 @@ public class CamperBot extends TeamRobot {
 
         super.run();
 
-        try {
-            setCurrentTarget(targets.getClosest(x, y).getName());
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
-        setScanMode(SCAN_LOCK);
-
-        driveAlongsideWall();
-        lastTurn = (int) getTime();
-
         while (true) {
-            if ((int) getTime() - lastTurn >= 50) {
-                move = true;
-                setScanMode(SCAN_SEARCH);
-                super.radarStep();
-                driveAlongsideWall();
-            } else {
-                move = false;
-                setCurrentTarget(targets.getClosest(x, y).getName());
-                setScanMode(SCAN_LOCK);
-                super.radarStep();
-            }
+            driveAlongsideWall();
+            execute();
+            radarStep();
         }
     }
 
@@ -109,10 +88,6 @@ public class CamperBot extends TeamRobot {
                 corner = Corner.LOWER_RIGHT;
             }
         }
-
-
-
-        lastTurn = (int) getTime();
     }
 
     @Override
@@ -125,9 +100,6 @@ public class CamperBot extends TeamRobot {
 
         double enemyX = (getX() + Math.sin(angle) * event.getDistance());
         double enemyY = (getY() + Math.cos(angle) * event.getDistance());
-
-        double followGun = getHeading() + event.getBearing() - getGunHeading();
-        turnGunRight(followGun);
 
         if (!targets.getTarget(event.getName()).isFriendly()) {
             if (event.getDistance() > 300) {

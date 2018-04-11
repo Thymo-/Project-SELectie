@@ -154,6 +154,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
         steerTo(calcHeading(xcmd, ycmd));
         setAhead(calcDistance(xcmd, ycmd));
+        waitFor(new MoveCompleteCondition(this));
     }
 
     /**
