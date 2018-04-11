@@ -120,7 +120,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         out.println("Steer command: " + steerAngle);
 
         setTurnRight(steerAngle);
-        waitFor(new TurnCompleteCondition(this));
         return steerAngle;
     }
 
@@ -276,7 +275,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
                     // Subtract current heading to get turn cmd
                     - getRadarHeading();
 
-            double turnCmd = 1.9 * Utils.normalRelativeAngleDegrees(radarTurn);
+            double turnCmd = 2.0 * Utils.normalRelativeAngleDegrees(radarTurn);
             setTurnRadarRight(turnCmd);
             execute();
         } else if (scanMode == SCAN_NOOP) {
