@@ -6,12 +6,18 @@ import robocode.*;
 
 import java.io.IOException;
 
+/**
+ * Abstract class that implements generic stuff for all bots
+ *
+ * @author Thymo van Beers
+ */
 abstract public class TeamRobot extends robocode.TeamRobot {
     TargetMap targets;
     private int scanMode;
 
-    private static final int SCAN_SEARCH = 0;
-    private static final int SCAN_LOCK = 1;
+    // Radar modes
+    static final int SCAN_SEARCH = 0;
+    static final int SCAN_LOCK = 1;
 
     public TeamRobot() {
         targets = new TargetMap();
@@ -22,6 +28,14 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         return scanMode;
     }
 
+    /**
+     * Set the new mode the radar needs to operate in.
+     * Calls radarStep to make mode switching happen ASAP.
+     *
+     * @param scanMode SCAN_SEARCH or SCAN_LOCK
+     *
+     * @author Thymo van Beers
+     */
     void setScanMode(int scanMode) {
         this.scanMode = scanMode;
 
@@ -195,12 +209,31 @@ abstract public class TeamRobot extends robocode.TeamRobot {
         }
     }
 
+    /**
+     * Run initialization for all robots
+     * Initializes the radar and does initial sweep
+     *
+     * @author Thymo van Beers
+     */
     public void run() {
         setAdjustGunForRobotTurn(true);
         setAdjustRadarForGunTurn(true);
         scanAll();
     }
 
+    /**
+     * Radar controller.
+     * This method should be called each round. Especially when in lock mode
+     * in order not to lose the lock.
+     *
+     * In scan mode:
+     *      - Check if the radar is about to stop turning (it shouldn't, but who knows)
+     *      - Set the radar to turn infinitely
+     * In lock mode:
+     *      - Arc around the target and narrow until target locked
+     *
+     * @author Thymo van Beers
+     */
     void radarStep() {
         if (scanMode == SCAN_SEARCH) {
             if (getRadarTurnRemaining() < 25.0) {
@@ -214,12 +247,13 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     }
 
     /**
-     * Switch radar to scan mode and do a single accelerated scan
+     * Switch radar to scan mode and do a single accelerated scan.
+     * This method blocks until the scan pass is complete.
      *
      * @author Thymo van Beers
      */
     void scanAll() {
-        setScanMode(SCAN_SEARCH);
+        setScanMode(SCAN_SEARCH); // Reset radar to scan mode to be sure
         setTurnRadarRight(Double.POSITIVE_INFINITY); // Spin forever
         setTurnGunRight(360);   // Turn gun one rotation for faster scanning
         execute();
