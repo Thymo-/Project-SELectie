@@ -2,6 +2,7 @@ package nl.saxion.ehi1vsb1;
 
 import nl.saxion.ehi1vsb1.messages.SideMessage;
 import robocode.*;
+import robocode.util.Utils;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -22,6 +23,9 @@ public class CamperBot extends TeamRobot {
 
     private Side side;
     private Corner corner;
+
+    private boolean moveRobot = true;
+    private int lastTurn = 0;
 
     @Override
     public void run() {
@@ -54,9 +58,23 @@ public class CamperBot extends TeamRobot {
 
         super.run();
 
+        if (targets.getClosest(x, y) != null) {
+            setCurrentTarget(targets.getClosest(x, y).getName());
+        }
+
         while (true) {
-            driveAlongsideWall();
-            execute();
+            if (moveRobot) {
+                setScanMode(SCAN_SEARCH);
+                radarStep();
+                driveAlongsideWall();
+                lastTurn = (int)getTime();
+            } else {
+                if (targets.getClosest(x, y) != null) {
+                    setCurrentTarget(targets.getClosest(x, y).getName());
+                    setScanMode(SCAN_LOCK);
+                }
+            }
+            moveRobot = ((int)getTime() - lastTurn >= 100);
             radarStep();
         }
     }
@@ -77,7 +95,10 @@ public class CamperBot extends TeamRobot {
                 corner = Corner.UPPER_LEFT;
             } else if (corner == Corner.UPPER_LEFT) {
                 moveTo(0, battleFieldHeight);
-                corner = Corner.LOWER_LEFT;
+                corner = Corner.UPPER_RIGHT;
+            } else if (corner == Corner.UPPER_RIGHT) {
+                moveTo(battleFieldWidth, battleFieldHeight);
+                corner = Corner.UPPER_LEFT;
             }
         } else if (side == Side.RIGHT_SIDE) {
             if (corner == Corner.LOWER_RIGHT) {
@@ -94,24 +115,24 @@ public class CamperBot extends TeamRobot {
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
 
-        double angleToEnemy = event.getBearing();
+        double followGun = getHeading() + event.getBearing() - getGunHeading();
+        setTurnGunRight(Utils.normalRelativeAngleDegrees(followGun));
 
-        double angle = Math.toRadians((getHeading() + angleToEnemy % 360));
-
-        double enemyX = (getX() + Math.sin(angle) * event.getDistance());
-        double enemyY = (getY() + Math.cos(angle) * event.getDistance());
-
-        if (!targets.getTarget(event.getName()).isFriendly()) {
-            if (event.getDistance() > 300) {
-                fire(0.5);
-            } else if (event.getDistance() > 200) {
-                fire(1);
-            } else if (event.getDistance() > 150) {
-                fire(1.5);
-            } else if (event.getDistance() > 100) {
-                fire(2);
-            } else if (event.getDistance() > 50) {
-                fire(3);
+        if (!moveRobot) {
+            if (!targets.getTarget(event.getName()).isFriendly()) {
+                if (event.getDistance() > 300) {
+                    fire(1);
+                } else if (event.getDistance() > 100) {
+                    fire(2);
+                } else if (event.getDistance() >= 0) {
+                    fire(3);
+                }
+            }
+        } else {
+            if (!targets.getTarget(event.getName()).isFriendly()) {
+                if (event.getDistance() < 200) {
+                    fire(2);
+                }
             }
         }
      }

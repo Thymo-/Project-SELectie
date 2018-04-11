@@ -47,13 +47,16 @@ public class TargetMap {
                 if (distanceToTargetXPos < distanceToClosestTargetXPos && distanceToTargetYPos < distanceToClosestTargetYPos && !targetList.get(i).isFriendly()) {
                     closestTarget = targetList.get(i);
                     System.out.println(closestTarget.getName());
+                    break;
                 } else if (distanceToTargetXPos < distanceToClosestTargetXPos && !targetList.get(i).isFriendly()) {
                     if (distanceToTargetXPos + distanceToTargetYPos < distanceToClosestTargetXPos + distanceToClosestTargetYPos) {
                         closestTarget = targetList.get(i);
+                        break;
                     }
                 } else if (distanceToTargetYPos < distanceToClosestTargetYPos && !targetList.get(i).isFriendly()) {
                     if (distanceToTargetXPos + distanceToTargetYPos < distanceToClosestTargetXPos + distanceToClosestTargetYPos) {
                         closestTarget = targetList.get(i);
+                        break;
                     }
                 }
             }
