@@ -20,14 +20,18 @@ public class AttackBot extends TeamRobot {
     @Override
     public void run() {
         super.run();
-        setCurrentTarget(targets.getClosest(getX(), getY()).getName());
-        setScanMode(SCAN_LOCK);
+
 
         while (true) {
             radarStep();
             determineRadarMode();
 
+            setCurrentTarget(targets.getClosest(getX(), getY()).getName());
+            setScanMode(SCAN_LOCK);
             Target target = targets.getTarget(currentTarget);
+
+            if (target == null)
+                return;
 
             // Nicely borrowed from the radar :-)
             double gunTurn =
@@ -47,8 +51,10 @@ public class AttackBot extends TeamRobot {
                 (getScanMode() == SCAN_SEARCH && time - lastModeSwitch > 15)) {
             lastModeSwitch = time;
             if (getScanMode() == SCAN_SEARCH) {
-                setCurrentTarget(targets.getClosest(getX(), getY()).getName());
-                setScanMode(SCAN_LOCK);
+                if (targets.getClosest(getX(), getY()) != null) {
+                    setCurrentTarget(targets.getClosest(getX(), getY()).getName());
+                    setScanMode(SCAN_LOCK);
+                }
             } else {
                 setScanMode(SCAN_SEARCH);
             }
@@ -58,6 +64,11 @@ public class AttackBot extends TeamRobot {
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
-        fire(2);
+
+        if (event.getDistance() < 100) {
+            fire(2);
+        } else {
+            fire(1);
+        }
     }
 }

@@ -5,6 +5,7 @@ import nl.saxion.ehi1vsb1.messages.*;
 import robocode.*;
 import robocode.util.Utils;
 
+import java.awt.*;
 import java.io.IOException;
 
 /**
@@ -247,6 +248,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     public void run() {
         setAdjustGunForRobotTurn(true);
         setAdjustRadarForGunTurn(true);
+        setColors(Color.PINK, Color.BLACK, Color.yellow);
         scanAll();
     }
 
