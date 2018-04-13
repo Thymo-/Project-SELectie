@@ -27,6 +27,11 @@ public class CamperBot extends TeamRobot {
     private boolean moveRobot = true;
     private int lastTurn = 0;
 
+    /**
+     * Main run method
+     *
+     * @author Tim Hofman
+     */
     @Override
     public void run() {
         double x = getX();
@@ -34,6 +39,7 @@ public class CamperBot extends TeamRobot {
         double battleFieldWidth = getBattleFieldWidth();
         double battleFieldHeight = getBattleFieldHeight();
 
+        //Side and corner where the robot is located
         if (x < battleFieldWidth/2) {
             side = Side.LEFT_SIDE;
             if (y < battleFieldHeight/2) {
@@ -50,6 +56,8 @@ public class CamperBot extends TeamRobot {
             }
         }
 
+        //Sends a message to the second CamperBot in the team
+        //See the onMessageReceived method
         try {
             sendMessage("nl.saxion.ehi1vsb1.CamperBot* (2)", new SideMessage(this.side));
         } catch (IOException e) {
@@ -66,6 +74,7 @@ public class CamperBot extends TeamRobot {
             if (moveRobot) {
                 setScanMode(SCAN_SEARCH);
                 radarStep();
+                //Makes the robot move alongside the wall
                 driveAlongsideWall();
                 lastTurn = (int)getTime();
             } else {
@@ -74,6 +83,10 @@ public class CamperBot extends TeamRobot {
                     setScanMode(SCAN_LOCK);
                 }
             }
+            //If moveRobot is true, then the robot is driving alongside the wall
+            //If moveRobot is false, then the robot is in a corner scanning for targets
+            //CamperBot will move when the current round number minus the round number
+            // when it was last driving alongside the wall is greater than 100
             moveRobot = ((int)getTime() - lastTurn >= 100);
             radarStep();
         }
@@ -108,6 +121,12 @@ public class CamperBot extends TeamRobot {
         }
     }
 
+    /**
+     * Customized onScannedRobot event that uses the super.onScannedRobot
+     *
+     * @param event - The scanned robot
+     * @author Tim Hofman
+     */
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
@@ -116,6 +135,7 @@ public class CamperBot extends TeamRobot {
         setTurnGunRight(Utils.normalRelativeAngleDegrees(followGun));
 
         if (!moveRobot) {
+            //Executed when the robot is not moving
             if (!targets.getTarget(event.getName()).isFriendly()) {
                 if (event.getDistance() > 300) {
                     fire(1);
@@ -126,6 +146,7 @@ public class CamperBot extends TeamRobot {
                 }
             }
         } else {
+            //Executed when the robot is moving
             if (!targets.getTarget(event.getName()).isFriendly()) {
                 if (event.getDistance() < 200) {
                     fire(2);
@@ -134,12 +155,21 @@ public class CamperBot extends TeamRobot {
         }
      }
 
+    /**
+     * Customized onMessageReceived event which adjusts the
+     * side of the second Robot if necessary and uses
+     * super.OnMessageReceived
+     *
+     * @param event - The message
+     * @author Tim Hofman
+     */
     @Override
     public void onMessageReceived(MessageEvent event) {
         super.onMessageReceived(event);
         if (event.getMessage() instanceof SideMessage) {
             if (!event.getSender().equals(this.getName())) {
                 Side side = ((SideMessage) event.getMessage()).getSide();
+                //If both CamperBots are on the same side, the second CamperBot will change sides
                 if (side == Side.LEFT_SIDE && this.side == Side.LEFT_SIDE) {
                     this.side = Side.RIGHT_SIDE;
                     this.corner = Corner.LOWER_RIGHT;
@@ -151,6 +181,17 @@ public class CamperBot extends TeamRobot {
         }
     }
 
+    /**
+     * Customized method for CamperBot
+     * This method blocks
+     *
+     * @param heading Desired heading (north referenced)
+     *
+     * @return The calculated steering angle
+     *
+     * @author Thymo van Beers
+     * @author Tim Hofman
+     */
     @Override
     double steerTo(double heading) {
         double steerAngle = heading - getHeading();
@@ -162,6 +203,8 @@ public class CamperBot extends TeamRobot {
         out.println("Steer command: " + steerAngle);
 
         setTurnRight(steerAngle);
+
+        //If waitFor method is not called, the robot will not drive correctly
         waitFor(new TurnCompleteCondition(this));
         return steerAngle;
     }

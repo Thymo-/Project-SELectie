@@ -7,6 +7,7 @@ import java.util.List;
  * Map containing targets
  *
  * @author Thymo van Beers
+ * @author Sieger van Breugel
  * @author Tim Hofman
  */
 public class TargetMap {
@@ -136,7 +137,7 @@ public class TargetMap {
     /**
      * Get a Target from the targetList based on name
      *
-     * @param targetName
+     * @param targetName - The name of the target to return
      * @return Target from targetList
      * @author Sieger van Breugel
      */
@@ -149,6 +150,13 @@ public class TargetMap {
         return null;
     }
 
+    /**
+     * Removes a Target from the targetList based on the name
+     *
+     * @param targetName - The name of the target to remove
+     * @author Thymo van Beers
+     * @author Tim Hofman
+     */
     public void removeTarget(String targetName) {
         for (int i = 0; i < targetList.size(); i++) {
             Target target = targetList.get(i);
@@ -157,6 +165,12 @@ public class TargetMap {
         }
     }
 
+    /**
+     * Gets the size of the targetList
+     *
+     * @return Size of targetList
+     * @author Thymo van Beers
+     */
     public int size() {
         return targetList.size();
     }
