@@ -38,7 +38,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
 
     /**
      * Set the new mode the radar needs to operate in.
-     * Calls radarStep to make mode switching happen ASAP.
      *
      * @param scanMode SCAN_SEARCH or SCAN_LOCK
      *
@@ -193,6 +192,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      * @param event - The scanned robot
      *
      * @author Thymo van Beers
+     * @author Tim Hofman
      */
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
@@ -258,7 +258,7 @@ abstract public class TeamRobot extends robocode.TeamRobot {
      *
      * In scan mode:
      *      - Check if the radar is about to stop turning (it shouldn't, but who knows)
-     *      - Set the radar to turn infinitely
+     *      - Set the radar to turn indefinitely
      * In lock mode:
      *      - Arc around the target and narrow until target locked
      * In no-op mode:
