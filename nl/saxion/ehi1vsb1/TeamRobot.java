@@ -103,7 +103,6 @@ abstract public class TeamRobot extends robocode.TeamRobot {
     /**
      * Given a heading calculate the steering angle
      * and steer to it
-     * This method blocks
      *
      * @param heading Desired heading (north referenced)
      *
