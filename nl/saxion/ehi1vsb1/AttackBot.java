@@ -10,6 +10,7 @@ import robocode.util.Utils;
  * @author Thymo van Beers
  */
 public class AttackBot extends TeamRobot {
+    // Timer to track how long it's been since the last radar mode switch
     private long lastModeSwitch;
 
     public AttackBot() {
@@ -17,10 +18,14 @@ public class AttackBot extends TeamRobot {
         this.lastModeSwitch = 0;
     }
 
+    /**
+     * AttackBot behaviour
+     *
+     * @author Thymo van Beers
+     */
     @Override
     public void run() {
         super.run();
-
 
         while (true) {
             radarStep();
@@ -45,6 +50,11 @@ public class AttackBot extends TeamRobot {
         }
     }
 
+    /**
+     * Determine the next radar mode based on mode and last switch time
+     *
+     * @author Thymo van Beers
+     */
     private void determineRadarMode() {
         long time = getTime();
         if ((getScanMode() == SCAN_LOCK && time - lastModeSwitch > 100) ||
@@ -61,6 +71,15 @@ public class AttackBot extends TeamRobot {
         }
     }
 
+    /**
+     * Event handler for radar, mostly handled by superclass
+     * Determines distance to target and fire's with a power of 2
+     * if range <100, otherwise fire with a power of 1
+     *
+     * @param event - The scanned robot
+     *
+     * @author Thymo van Beers
+     */
     @Override
     public void onScannedRobot(ScannedRobotEvent event) {
         super.onScannedRobot(event);
